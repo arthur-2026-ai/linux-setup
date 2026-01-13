@@ -163,3 +163,10 @@ bash
 sudo updatedb          # Mettre à jour la base de données
 locate .kt             # Très rapide mais moins précis
 locate -i main.kt      # Insensible à la casse
+
+Vérifier l'espace disque
+bash
+
+df -h                  # Espace disque disponible
+du -sh *               # Taille de chaque dossier
+du -sh .               # Taille du dossier courant

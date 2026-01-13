@@ -39,62 +39,281 @@ Ubuntu est une distribution Linux (une version de Linux). Nous l'avons retenue p
 
 ---
 
-## 🎓 Objectifs de cette formation
+## 🎯 Objectif général
 
-La formation est structurée en **sept modules**, chacun abordant un aspect différent de Linux :
+Permettre à **tous les développeurs et stagiaires** de :
 
-### **Module 0 : Introduction** *(vous êtes ici)*
-- Présentation de Linux et Ubuntu.
-- Guide d'installation d'Ubuntu
-- Examen de l'interface utilisateur.
-
-### **Module 1 : Commandes de base**
-- Navigation dans le système de fichiers.
-- Création, édition et suppression de fichiers.
-- Introduction au terminal.
-
-### **Module 2 : Système de fichiers**
-- Organisation des répertoires sous Linux.
-- Distinction entre chemins absolus et relatifs
-- Manipulation avancée des fichiers.
-
-### **Module 3 : Gestion des paquets**
-- Installation de logiciels avec `apt`.
-- résolution des problèmes de dépendances
-- Mises à jour du système.
-
-### **Module 4 : Permissions et utilisateurs**
-- Gestion des droits d'accès.
-- Administration des utilisateurs
-- Utilisation correcte de `sudo`.
-
-### **Module 5 : Processus**
-- Monitorage des processus actifs.
-- Allocation de mémoire et d'unité centrale
-- Interruption des processus bloqués.
-
-### **Module 6 : Networking**
-- Vérification de la Connectivité.
-- résolution basique des problèmes de réseau
-- Concepts de base de SSH.
-
-### **Module 7 : les bases de git**
-- Initialisation d'un depot.
-- faire un commit
-- push sur le depot distant
+* Être **autonomes sur Ubuntu Linux**
+* Travailler dans un **environnement homogène**
+* Comprendre ce qu’ils font (pas juste exécuter des commandes)
+* Être opérationnels sur la stack **Kotlin + Kobweb**
 
 ---
 
-## ⏱️ Temps nécessaire
-----------------------------------------------------
-| Phase                             | Durée Estimée|
-|--------------------------------------------------|
-| **Lecture des modules**           | 2 à 3 heures |
-| **Exercices pratiques**           | 3 à 4 heures |
-| **Révision et approfondissement** | 1 à 2 heures |
-| **TOTAL**                         | **6 à 9 heures** |
-|-------------------------------------------------------
-💡 **Note** : Étudiez le matériel à votre rythme pour une bonne compréhension.
+## 🧭 Organisation de la formation
+
+* **Durée totale** : 2 à 3 semaines (en parallèle du travail)
+* **Format** :
+
+  * Auto-formation guidée (README + exercices)
+  * Démo rapide en réunion
+  * Validation par des commandes à exécuter
+* **Pré-requis** : aucun (niveau débutant accepté)
+
+---
+
+## 🧱 MODULE 0 – Bases obligatoires (Avant de commencer)
+
+### Objectif
+
+Comprendre **pourquoi Linux** et poser le cadre commun.
+
+### Contenu
+
+* Pourquoi Ubuntu en startup
+* Différence Windows / macOS / Linux
+* Terminal ≠ danger
+* Structure globale d’un système Linux
+
+### Validation
+
+* Expliquer à l’oral :
+
+  * ce qu’est une distribution
+  * ce qu’est le terminal
+
+---
+
+## 🖥️ MODULE 1 – Prise en main d’Ubuntu
+
+### Objectif
+
+Être à l’aise avec l’interface et le terminal.
+
+### Compétences
+
+* Ouvrir le terminal
+* Comprendre le prompt
+* Naviguer dans le système
+
+### Commandes clés
+
+```bash
+pwd
+ls
+ls -la
+cd
+clear
+```
+
+### Exercice
+
+* Naviguer jusqu’au dossier personnel
+* Lister les fichiers cachés
+
+---
+
+## 📁 MODULE 2 – Système de fichiers Linux
+
+### Objectif
+
+Comprendre où sont les choses et pourquoi.
+
+### Contenu
+
+* /home, /etc, /var, /usr
+* Dossiers projet
+* Bonnes pratiques
+
+### Commandes
+
+```bash
+mkdir
+rm -r
+cp
+mv
+tree
+```
+
+### Exercice
+
+* Créer un dossier `workspace`
+* Créer un projet `kobweb-demo`
+
+---
+
+## 🔐 MODULE 3 – Permissions et sécurité (ESSENTIEL)
+
+### Objectif
+
+Éviter les erreurs graves et comprendre sudo.
+
+### Contenu
+
+* Utilisateur vs root
+* Permissions rwx
+* chmod, chown
+
+### Commandes
+
+```bash
+whoami
+chmod
+chown
+sudo
+```
+
+### Exercice
+
+* Rendre un script exécutable
+* Comprendre une erreur "Permission denied"
+
+---
+
+## ⚙️ MODULE 4 – Processus & services
+
+### Objectif
+
+Comprendre ce qui tourne sur la machine.
+
+### Contenu
+
+* Processus
+* Ports
+* Services
+
+### Commandes
+
+```bash
+ps aux
+top
+htop
+kill
+lsof -i
+```
+
+### Exercice
+
+* Trouver un processus Java
+* Identifier un port utilisé
+
+---
+
+## 🌐 MODULE 5 – Réseau & outils développeur
+
+### Objectif
+
+Diagnostiquer rapidement un problème réseau.
+
+### Commandes
+
+```bash
+ip a
+ping
+curl
+wget
+netstat -tuln
+```
+
+### Exercice
+
+* Tester une API locale
+* Vérifier un port Kobweb
+
+---
+
+## 🧰 MODULE 6 – Git en ligne de commande
+
+### Objectif
+
+Maîtriser Git **sans dépendre d’un GUI**.
+
+### Commandes
+
+```bash
+git clone
+git status
+git add
+git commit
+git pull
+git push
+```
+
+### Règles d’équipe
+
+* Pas de commit sur main
+* Messages clairs
+
+---
+
+## ☕ MODULE 7 – Stack Kotlin / Kobweb
+
+### Objectif
+
+Installer et utiliser la stack officielle.
+
+### Contenu
+
+* JDK (version standardisée)
+* Gradle
+* Kobweb CLI
+
+### Commandes
+
+```bash
+java -version
+gradle -v
+kobweb version
+kobweb run
+```
+
+---
+
+## 🧪 MODULE 8 – Scripts & automatisation
+
+### Objectif
+
+Standardiser l’environnement.
+
+### Contenu
+
+* Bash de base
+* Scripts d’installation
+* Variables d’environnement
+
+### Exemple
+
+```bash
+#!/bin/bash
+echo "Installation en cours..."
+```
+
+---
+
+## ✅ MODULE 9 – Validation finale
+
+### Objectif
+
+S’assurer que tout le monde est aligné.
+
+### Validation
+
+* Script `check-env.sh`
+* Démarrage d’un projet Kobweb
+* Commit de validation
+
+---
+
+## 🏁 Résultat attendu
+
+À la fin :
+
+* Tous les développeurs travaillent sur Ubuntu
+* Même stack, mêmes versions
+* Moins de bugs "chez moi ça marche"
+* Équipe plus autonome et professionnelle
+
+---
 
 ---
 
