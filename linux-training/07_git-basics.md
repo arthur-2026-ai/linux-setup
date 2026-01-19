@@ -14,7 +14,7 @@
 ## 📊 Pourquoi Git est essentiel pour le développement ?
 
 Git est le système de contrôle de version **standard** pour :
-                     
+```                 
 | Besoin                        | Solution Git                                       |
 |-------------------------------------------------------------|
 | Sauvegarder votre code        | `git commit`                |
@@ -22,7 +22,7 @@ Git est le système de contrôle de version **standard** pour :
 | Essayer des idées sans risque | `git branch`, `git checkout`|
 | Retourner en arrière          | `git revert`, `git reset`   |
 | Collaborer sur Kobweb         | Pull Requests, Code Review  |
-
+```
 ---
 
 ## 🚀 Installation et configuration
@@ -51,13 +51,13 @@ Git est un système de `contrôle de version distribué`.
 
 Il permet :
 
-de sauvegarder des versions du code (commits)
+* de sauvegarder des versions du code (commits)
 
-de collaborer efficacement
+* de collaborer efficacement
 
-de travailler hors ligne
+* de travailler hors ligne
 
-de sécuriser le projet
+* de sécuriser le projet
 
 ### 2️⃣ Concepts fondamentaux (À COMPRENDRE ABSOLUMENT)
 🔹 Dépôt (Repository)
@@ -178,3 +178,28 @@ nouveau code
 git add fichier
 git commit
 ```
+### ❌ Erreurs fréquentes
+
+Travailler sur main
+
+Commits trop gros
+
+Messages flous
+
+Oublier .gitignore
+
+Forcer avec --force sans comprendre
+
+### ✅ Critères de validation
+
+Le développeur sait :
+
+utiliser Git seul
+
+travailler avec GitHub
+
+créer des branches
+
+résoudre un conflit simple
+
+expliquer le workflow Git

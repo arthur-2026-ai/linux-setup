@@ -15,6 +15,7 @@
 
 Linux organise les fichiers de manière logique :
 
+```bash
 / (racine)
 ├── bin/ → Commandes essentielles (ls, cp, mv...)
 ├── etc/ → Fichiers de configuration
@@ -25,6 +26,7 @@ Linux organise les fichiers de manière logique :
 ├── opt/ → Logiciels optionnels/packages tiers
 ├── dev/ → Périphériques matériels
 └── proc/ → Informations système et processus
+```
 
 💡 **Pour le développement Kotlin** :
 - Votre code va dans `~/` (votre dossier home)
@@ -39,54 +41,53 @@ Linux organise les fichiers de manière logique :
 ```bash
 pwd
 # Affiche : /home/votre_nom
-
-ls - List files
-
+```
+### ls - List files
+```bash
 ls          # Liste simple
 ls -l       # Liste détaillée (permissions, taille, date)
 ls -la      # Liste détaillée + fichiers cachés
 ls -lh      # Tailles lisibles par humains (Ko, Mo, Go)
 ls -lt      # Tri par date (plus récent en premier)
-
-cd - Change Directory
-
+```
+### cd - Change Directory
+```bash
 cd /chemin/absolu      # Aller à un chemin absolu
 cd dossier_relatif      # Aller à un dossier relatif
 cd ~                   # Retour au dossier home
 cd ..                  # Remonter d'un niveau
 cd -                   # Retourner au dossier précédent
 cd /                   # Aller à la racine
+```
+## ✨ **Création et gestion** 
 
-✨ **Création et gestion** 
-
-mkdir - Make Directory
-
+### mkdir - Make Directory
+```bash 
 mkdir mon-projet                          # Créer un dossier
 mkdir -p mon-projet/src/main/kotlin       # Créer une arborescence
 mkdir projet{1,2,3}                       # Créer plusieurs dossiers
+```
+### touch - Créer/modifier date fichier
 
-touch - Créer/modifier date fichier
-
+```bash
 touch Main.kt                      # Créer un fichier vide
 touch fichier1.txt fichier2.txt    # Créer plusieurs fichiers
 touch -t 202401121200 fichier.txt  # Modifier la date
-
-touch - Créer/modifier date fichier
-bash
-
+```
+### touch - Créer/modifier date fichier
+```bash
 touch Main.kt                      # Créer un fichier vide
 touch fichier1.txt fichier2.txt    # Créer plusieurs fichiers
 touch -t 202401121200 fichier.txt  # Modifier la date
+```
+### cp - Copy
 
-cp - Copy
-bash
-
+```bash
 cp source.txt destination.txt              # Copier un fichier
 cp -r dossier_source dossier_destination   # Copier un dossier récursivement
 cp *.kt backup/                           # Copier tous les fichiers .kt
-
-mv - Move/Rename
-bash
+```
+### mv - Move/Rename
 
 mv ancien_nom.kt nouveau_nom.kt    # Renommer
 mv fichier.kt dossier/             # Déplacer
@@ -94,79 +95,79 @@ mv *.kt archive/                   # Déplacer plusieurs fichiers
 
 rm - Remove
 
-⚠️ DANGER : Pas de corbeille en ligne de commande !
-bash
-
+## ⚠️ DANGER : Pas de corbeille en ligne de commande !
+```bash
 rm fichier.txt                     # Supprimer un fichier
 rm -r dossier/                     # Supprimer un dossier récursivement
 rm -rf dossier/                    # Forcer la suppression sans confirmation
-
-🔒 Bonnes pratiques :
+```
+## 🔒 Bonnes pratiques :
 bash
 
-# TOUJOURS vérifier avant de supprimer récursivement
+### TOUJOURS vérifier avant de supprimer récursivement
 ls -la dossier/
-# Puis seulement
+### Puis seulement
 rm -r dossier/
 
-📍 Chemins absolus vs relatifs
+### 📍 Chemins absolus vs relatifs
 Chemin absolu
 
 Commence toujours par /
-bash
 
+```bash
 cd /home/ton_nom/projets/kotlin
 ls /usr/bin/java
+```
 
-Chemin relatif
-
-Départ depuis le dossier courant
-bash
-
-# Si je suis dans /home/ton_nom
+### Si je suis dans /home/ton_nom
+```bash
 cd projets/kotlin          # = /home/ton_nom/projets/kotlin
 cd ../autre-projet         # Remonte puis redescend
 cd ./sous-dossier          # Le . est optionnel mais clair
+```
+### Symboles spéciaux
 
-Symboles spéciaux
-bash
-
+```bash
 .      # Dossier courant
 ..     # Dossier parent
 ~      # Dossier home de l'utilisateur
 -      # Dossier précédent
-
+```
 🔍 Recherche de fichiers
-find - Recherche puissante
-bash
+### find - Recherche puissante
 
-# Rechercher par nom
+
+* Rechercher par nom
+```bash
 find . -name "*.kt"                    # Tous les fichiers Kotlin
 find ~/projets -name "Main.kt"         # Rechercher dans projets
 find / -type f -name "*.java" 2>/dev/null  # Recherche système
-
-# Rechercher par type
+```
+* Rechercher par type
+```bash
 find . -type f                         # Fichiers seulement
 find . -type d                         # Dossiers seulement
-
-# Rechercher par taille
+```
+* Rechercher par taille
+```bash
 find . -size +100M                     > 100 Mo
 find . -size -10k                      < 10 Ko
-
-# Rechercher par date
+```
+* Rechercher par date
+```bash
 find . -mtime -7                       # Modifié dans les 7 derniers jours
 find . -mtime +30                      # Modifié il y a plus de 30 jours
+```
+### locate - Recherche rapide (base de données)
 
-locate - Recherche rapide (base de données)
-bash
-
+```bash
 sudo updatedb          # Mettre à jour la base de données
 locate .kt             # Très rapide mais moins précis
 locate -i main.kt      # Insensible à la casse
-
-Vérifier l'espace disque
-bash
-
+```
+### Vérifier l'espace disque
+```bash
 df -h                  # Espace disque disponible
 du -sh *               # Taille de chaque dossier
 du -sh .               # Taille du dossier courant
+```

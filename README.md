@@ -1,4 +1,4 @@
-# 🚀 Environnement de Développement Unifié – Kotlin & Kobweb
+#  Environnement de Développement Unifié – Kotlin & Kobweb
 
 ## 🎯 But du dépôt
 
@@ -22,7 +22,7 @@ Dans une équipe qui grandit (startup, freelances, stagiaires), on rencontre vit
 *   des bugs liés à la configuration locale
 *   des difficultés à bien former les nouveaux
 
-🎯 **Ce dépôt résout ces problèmes** en donnant :
+ **Ce dépôt résout ces problèmes** en donnant :
 
 *   une base Linux commune (Ubuntu)
 *   une stack technique unique
@@ -31,7 +31,7 @@ Dans une équipe qui grandit (startup, freelances, stagiaires), on rencontre vit
 
 ---
 
-## 🧩 Stack technique officielle
+## Stack technique officielle
 
 Cette stack est **obligatoire pour tous les développeurs**.
 
@@ -58,10 +58,10 @@ Cette stack est **obligatoire pour tous les développeurs**.
 
 Ce dépôt est rangé en plusieurs parties :
 
-*   📘 **Formation Linux** : les bases pour bien travailler sur Ubuntu
-*   ⚙️ **Scripts d'installation** : pour installer toute la stack automatiquement
-*   📐 **Règles d'équipe** : Git, comment nommer les choses, organisation
-*   ✅ **Vérification** : pour voir si l'environnement est bien installé
+*   **Formation Linux** : les bases pour bien travailler sur Ubuntu
+*   **Scripts d'installation** : pour installer toute la stack automatiquement
+*   **Règles d'équipe** : Git, comment nommer les choses, organisation
+*   **Vérification** : pour voir si l'environnement est bien installé
 
 Chaque dossier est fait pour être **lu et utilisé dans l'ordre**.
 
@@ -80,7 +80,7 @@ Pas besoin d'être un pro de Linux au début.
 
 ---
 
-## 🚦 Règles importantes
+##  Règles importantes
 
 *   ❌ Pas de développement hors Ubuntu
 *   ❌ Pas d'environnement local perso non documenté
@@ -89,7 +89,7 @@ Pas besoin d'être un pro de Linux au début.
 
 ---
 
-## 🏁 Comment commencer (en gros)
+##  Comment commencer (en gros)
 
 1.  Installer Ubuntu 22.04 LTS
 2.  Cloner ce dépôt

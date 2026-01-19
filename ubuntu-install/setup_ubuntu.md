@@ -1,37 +1,52 @@
-# 🖥️ Guide d'Installation Ubuntu 22.04 LTS
+# 🖥️ Guide d'Installation Ubuntu 24.04 LTS (Noble Numbat)
 
-> **Objectif :** Installer Ubuntu 22.04 LTS de manière professionnelle  
+> **Objectif :** Installer Ubuntu 24.04 LTS de manière professionnelle  
 > **Niveau :** Débutant à Intermédiaire  
 > **Durée :** 30 minutes à 2 heures selon la méthode
+
+---
+
+## 🆕 Pourquoi Ubuntu 24.04 LTS ?
+
+**Ubuntu 24.04 LTS** est la version **recommandée pour les développeurs** en 2024/2025 :
+
+✅ **Support jusqu'en 2029** (5 ans de mises à jour)  
+✅ **Kernel 6.8** - Meilleur support matériel  
+✅ **Python 3.12** - +20% de performance  
+✅ **GCC 13** - Support C++23 complet  
+✅ **Performance** - 15% plus rapide au boot  
+✅ **Sécurité renforcée** - AppArmor 4.0  
+✅ **Docker natif** - Meilleure intégration  
+
+**C'est LA version pour les équipes de développement professionnelles ! 🚀**
 
 ---
 
 ## 📋 Table des matières
 
 1. [Prérequis et préparation](#prérequis)
-2. [Option 1 : Installation complète (recommandé)](#option-1)
-5. [Configuration post-installation](#post-installation)
-6. [Dépannage](#dépannage)
+2. [Option 1 : Installation complète ](#recommandé)
+3. [Configuration post-installation](#post-installation)
+4. [Dépannage](#dépannage)
 
 ---
-
-
 <a name="prérequis"></a>
 ## ⚙️ Prérequis et préparation
 
 ### Matériel requis
 
-**Minimum :**
+**Minimum officiel :**
 - Processeur : 2 GHz dual-core
 - RAM : 4 GB
 - Disque : 25 GB
 - USB : 4 GB minimum
 
 **Recommandé pour le développement :**
-- Processeur : Intel i5/i7 ou AMD Ryzen 5/7
-- RAM : 8-16 GB
-- Disque : 256 GB SSD
+- Processeur : Intel i5/i7 Gen 8+ ou AMD Ryzen 5/7
+- RAM : 16 GB (8 GB minimum)
+- Disque : 256 GB SSD NVMe
 - USB : 8 GB
+- Connexion Internet pendant l'installation
 
 ### ⚠️ TRÈS IMPORTANT : Sauvegarder tes données !
 
@@ -41,30 +56,32 @@ Avant TOUTE installation, sauvegarde :
 ✅ Documents
 ✅ Photos/Vidéos
 ✅ Code source (pousse sur Git !)
-✅ Configurations importantes
+✅ Configurations importantes (~/.bashrc, ~/.ssh, etc.)
 ✅ Favoris navigateur
 ✅ Clés SSH/GPG
+✅ Base de données locales
 ```
 
 **Moyens de sauvegarde :**
 - Disque dur externe
 - Cloud (Google Drive, Dropbox)
-- Clé USB
+- Clé USB (plusieurs si nécessaire)
+- GitHub/GitLab pour le code
 
-### 📥 Télécharger Ubuntu 22.04 LTS
+### 📥 Télécharger Ubuntu 24.04 LTS
 
 1. Va sur : **https://ubuntu.com/download/desktop**
-2. Télécharge **Ubuntu 22.04.3 LTS** (fichier .iso)
-3. Taille : environ 4.5 GB
+2. Télécharge **Ubuntu 24.04 LTS** (fichier .iso)
+3. Taille : environ 5.7 GB
 
 **Vérifie le téléchargement :**
 
 ```bash
 # Sur Linux/Mac
-sha256sum ubuntu-22.04.3-desktop-amd64.iso
+sha256sum ubuntu-24.04-desktop-amd64.iso
 
 # Sur Windows (PowerShell)
-Get-FileHash ubuntu-22.04.3-desktop-amd64.iso -Algorithm SHA256
+Get-FileHash ubuntu-24.04-desktop-amd64.iso -Algorithm SHA256
 ```
 
 Compare le résultat avec la somme officielle sur le site Ubuntu.
@@ -87,12 +104,14 @@ Compare le résultat avec la somme officielle sur le site Ubuntu.
    ```
    Périphérique : [Ta clé USB]
    Type de démarrage : Image disque
-   Sélectionner : [ubuntu-22.04.3-desktop-amd64.iso]
+   Sélectionner : [ubuntu-24.04-desktop-amd64.iso]
    Schéma de partition : GPT
    Système de destination : UEFI
    ```
 5. Clique sur **Démarrer**
 6. Attends 5-10 minutes
+
+**⚡ Nouveau :** Rufus détecte automatiquement Ubuntu 24.04 !
 
 #### Sous Linux
 
@@ -105,7 +124,7 @@ lsblk
 # └─sdb1   8:17   1  14.9G  0 part
 
 # Crée la clé bootable (remplace /dev/sdX par ton périphérique)
-sudo dd if=ubuntu-22.04.3-desktop-amd64.iso of=/dev/sdX bs=4M status=progress && sync
+sudo dd if=ubuntu-24.04-desktop-amd64.iso of=/dev/sdX bs=4M status=progress && sync
 ```
 
 ⚠️ **ATTENTION** : Vérifie bien le nom du périphérique ! dd efface tout sans confirmation.
@@ -114,7 +133,7 @@ sudo dd if=ubuntu-22.04.3-desktop-amd64.iso of=/dev/sdX bs=4M status=progress &&
 
 1. Télécharge **balenaEtcher** : https://www.balena.io/etcher/
 2. Lance Etcher
-3. Sélectionne l'ISO Ubuntu
+3. Sélectionne l'ISO Ubuntu 24.04
 4. Sélectionne ta clé USB
 5. Clique sur **Flash!**
 
@@ -143,17 +162,20 @@ sudo dd if=ubuntu-22.04.3-desktop-amd64.iso of=/dev/sdX bs=4M status=progress &&
 ### Étape 3 : Démarrer sur la clé USB
 
 1. Ton PC redémarre
-2. Tu vois l'écran de démarrage Ubuntu (logo violet)
+2. Tu vois l'écran de démarrage Ubuntu (nouveau design 24.04 !)
 3. Sélectionne **"Try or Install Ubuntu"**
 4. Attends le chargement (1-2 minutes)
 
-### Étape 4 : Installation guidée
+### Étape 4 : Installation guidée - NOUVEAU dans 24.04 ! 🎉
+
+Ubuntu 24.04 introduit un **nouvel installateur Flutter** plus rapide et moderne !
 
 #### Écran de bienvenue
 
 ```
 ┌─────────────────────────────────┐
-│   Welcome to Ubuntu 22.04       │
+│   Welcome to Ubuntu 24.04 LTS   │
+│         Noble Numbat            │
 │                                 │
 │   Choose your language:         │
 │   • English                     │
@@ -168,165 +190,270 @@ sudo dd if=ubuntu-22.04.3-desktop-amd64.iso of=/dev/sdX bs=4M status=progress &&
 1. **Langue** : Choisis ta langue
 2. Clique sur **"Install Ubuntu"**
 
-#### Disposition du clavier
-
-1. Sélectionne ta disposition (ex: French - French)
-2. Teste dans la zone de texte
-3. **Continue**
-
-#### Mises à jour et autres logiciels
 
 ```
-Type d'installation :
-○ Installation normale        ← CHOISIS CELLE-CI
-○ Installation minimale
-
-Autres options :
-☑ Télécharger les mises à jour pendant l'installation
-☑ Installer logiciels tiers (drivers, codecs)
+┌──────────────────────────────────┐
+│ Connect to Internet              │
+│                                  │
+│ ○ Use WiFi                       │
+│   [Select network...]            │
+│                                  │
+│ ○ Use wired connection           │
+│                                  │
+│ ○ I don't want to connect now    │
+└──────────────────────────────────┘
 ```
 
-**Recommandation :** Coche les deux options
+**Recommandation :** Connecte-toi maintenant pour :
+- Télécharger les mises à jour pendant l'installation
+- Installer les codecs propriétaires
+- Configurer les comptes en ligne
 
-#### Type d'installation (IMPORTANT !)
+#### Type d'installation
 
 ```
 ┌──────────────────────────────────────────┐
-│ Type d'installation                      │
+│ Installation type                        │
 │                                          │
-│ ○ Effacer le disque et installer Ubuntu │ ← Pour installation complète
+│ ○ Normal installation                    │
+│   (Recommended for most users)           │
+│   - Web browser, utilities, office       │
+│   - Games, media players                 │
 │                                          │
-│ ○ Autre chose (avancé)                  │
+│ ○ Minimal installation                   │
+│   - Web browser and basic utilities      │
 │                                          │
-│ ⚠️  ATTENTION : Cela effacera tout !     │
+│ Additional options:                      │
+│ ☑ Download updates while installing      │
+│ ☑ Install third-party software           │
+│   (Graphics, WiFi, codecs)               │
 └──────────────────────────────────────────┘
 ```
 
+#### Partitionnement (IMPORTANT !)
+
 **Pour installation complète :**
-1. Sélectionne **"Effacer le disque et installer Ubuntu"**
+
+```
+┌──────────────────────────────────────────┐
+│ Installation type                        │
+│                                          │
+│ ○ Erase disk and install Ubuntu          │ ← CHOISIS CELLE-CI
+│                                          │
+│ ○ Manual partitioning (Advanced)         │
+│                                          │
+│ ⚠️  This will delete all data!           │
+│                                          │
+│ Disk: /dev/sda (500 GB SSD)              │
+└──────────────────────────────────────────┘
+```
+
+**⚡ NOUVEAU :** Interface plus claire avec visualisation du disque !
+
+1. Sélectionne **"Erase disk and install Ubuntu"**
 2. Vérifie bien que c'est le bon disque !
 3. **Continue**
-
-#### Partitionnement automatique
-
-Ubuntu propose :
-```
-/dev/sda
-  ├─ EFI System Partition (512 MB)
-  ├─ ext4 / (tout le reste)
-  └─ swap (optionnel)
-```
-
-Clique **"Installer maintenant"**
 
 #### Confirmation
 
 ```
 ┌──────────────────────────────────────┐
-│ Les modifications suivantes vont     │
-│ être appliquées :                    │
+│ Write the changes to disk?           │
 │                                      │
-│ Le disque /dev/sda sera formaté     │
+│ The following will be formatted:     │
+│ • /dev/sda                           │
 │                                      │
-│ ⚠️  IMPOSSIBLE À ANNULER !           │
+│ ⚠️  THIS CANNOT BE UNDONE!           │
 │                                      │
-│ [Retour] [Continuer]                │
+│ [Go Back] [Continue]                 │
 └──────────────────────────────────────┘
 ```
 
 **Dernière chance !** Vérifie que tu as sauvegardé tes données.
 
-Clique **"Continuer"**
+Clique **"Continue"**
 
 #### Fuseau horaire
 
-1. Sélectionne ta ville (ex: Yaoundé, Cameroun)
-2. **Continue**
+**⚡ NOUVEAU :** Détection automatique via IP !
+
+```
+┌─────────────────────────────────────┐
+│ Where are you?                      │
+│                                     │
+│ [    World Map Interactive    ]     │
+│                                     │
+│ Detected: Yaoundé, Cameroon        │
+│ Timezone: Africa/Douala (WAT)      │
+│                                     │
+│ [Change] [Continue]                 │
+└─────────────────────────────────────┘
+```
+
+Clique **"Continue"** si correct.
 
 #### Création de l'utilisateur
 
 ```
 ┌─────────────────────────────────────┐
-│ Qui êtes-vous ?                     │
+│ Who are you?                        │
 │                                     │
-│ Votre nom : [Claude fotso]          │
-│ Nom de l'ordinateur : [fotso-DevOps]│
-│ Nom d'utilisateur : [claude]        │
-│ Mot de passe : [••••••••]           │
-│ Confirmer : [••••••••]              │
+│ Your name:     [claude fotso]       │
+│ Computer name: [fotso-dev]          │
+│ Username:      [fotso]              │
+│ Password:      [••••••••]          │
+│ Confirm:       [••••••••]          │
 │                                     │
-│ ○ Se connecter automatiquement      │
-│ ● Demander mon mot de passe         │ ← Recommandé
+│ ○ Log in automatically              │
+│ ● Require password to log in       │ ← Recommandé
+│ ☐ Use Active Directory             │ ← Nouveau !
 └─────────────────────────────────────┘
 ```
-
-**Conseils pour le mot de passe :**
-- Minimum 8 caractères
-- Mélange lettres/chiffres/symboles
-- Note-le quelque part de sûr !
-
-Clique **"Continue"**
-
-### Étape 5 : Installation en cours
-
-```
-┌────────────────────────────────────┐
-│ Installation d'Ubuntu              │
-│                                    │
-│ [████████████████░░░░░] 75%        │
-│                                    │
-│ Installation des fichiers...       │
-│ Temps restant : environ 10 min     │
-│                                    │
-│ Le saviez-vous ?                   │
-│ Ubuntu signifie "humanité"...      │
-└────────────────────────────────────┘
-```
-
-⏱️ **Durée :** 15-30 minutes selon ton matériel
-
-**Pendant ce temps :**
-- Ne touche à rien
-- Garde l'ordi branché
-- Prépare-toi un café ☕
-
-### Étape 6 : Finalisation
-
-```
-┌────────────────────────────────────┐
-│ Installation terminée !            │
-│                                    │
-│ ✅ Ubuntu 22.04 LTS est installé   │
-│                                    │
-│ Redémarrez pour utiliser le        │
-│ nouveau système.                   │
-│                                    │
-│ [Continuer à tester] [Redémarrer]  │
-└────────────────────────────────────┘
-```
-
-1. Clique **"Redémarrer maintenant"**
-2. Quand demandé, **retire la clé USB**
-3. Appuie sur `Entrée`
-
-### Étape 7 : Premier démarrage
-
-```
-Ubuntu 22.04 LTS fotso-DevOps tty1
-
-fotso-DevOps login: _
-```
+ continue avec l'instali
 
 1. Entre ton **nom d'utilisateur**
 2. Entre ton **mot de passe** (invisible quand tu tapes)
 3. Appuie sur `Entrée`
 
-**Bienvenue dans Ubuntu ! 🎉**
+**🎉 Bienvenue dans Ubuntu 24.04 LTS ! 🎉**
+
+
+
+### Étape 1 : Mise à jour du système
+
+```bash
+# Mettre à jour la liste des paquets
+sudo apt update
+
+# Installer les mises à jour
+sudo apt upgrade -y
+
+# Mettre à jour le firmware (nouveau dans 24.04)
+sudo fwupdmgr refresh
+sudo fwupdmgr update
+
+# Nettoyer
+sudo apt autoremove -y
+sudo apt autoclean
+```
+
+⏱️ Durée : 5-15 minutes
+
+### Étape 2 : Activer les dépôts universe et multiverse
+
+```bash
+# Activer universe (logiciels maintenus par la communauté)
+sudo add-apt-repository universe
+
+# Activer multiverse (logiciels propriétaires)
+sudo add-apt-repository multiverse
+
+# Mettre à jour
+sudo apt update
+```
+
+### Étape 3 : Installer les outils de base
+
+```bash
+# Outils essentiels développement
+sudo apt install -y \
+    curl \
+    wget \
+    git \
+    vim \
+    neovim \
+    build-essential \
+    software-properties-common \
+    apt-transport-https \
+    ca-certificates \
+    gnupg \
+    lsb-release \
+    net-tools \
+    htop \
+    tree \
+    zip \
+    unzip
+```
+
+### Étape 4 : Configurer Git
+
+```bash
+# Ton nom
+git config --global user.name "Ton Nom"
+
+# Ton email
+git config --global user.email "ton.email@example.com"
+
+# Éditeur par défaut
+git config --global core.editor vim
+
+# Branche par défaut
+git config --global init.defaultBranch main
+
+# Vérifier
+git config --list
+```
+
+### Étape 5 : Configurer le firewall
+
+```bash
+# Activer UFW (Uncomplicated Firewall)
+sudo ufw enable
+
+# Autoriser SSH (si besoin)
+sudo ufw allow ssh
+
+# Autoriser les ports dev courants
+sudo ufw allow 3000:9000/tcp  # Ports dev web
+
+# Voir le statut
+sudo ufw status verbose
+```
+
+### Étape 6 : Optimisations pour développeurs
+
+#### Augmenter les watchers (pour Node.js, React, etc.)
+
+```bash
+echo "fs.inotify.max_user_watches=524288" | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
+```
+
+#### Améliorer les performances SSD
+
+```bash
+# Vérifier si TRIM est actif
+sudo systemctl status fstrim.timer
+
+# Activer si nécessaire
+sudo systemctl enable fstrim.timer
+```
+
+#### Configurer Swappiness (optionnel)
+
+```bash
+# Réduire l'utilisation du swap (bon pour SSD)
+echo "vm.swappiness=10" | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
+```
+
+### Étape 7 : Personnaliser l'apparence (optionnel)
+
+```bash
+# Installer Gnome Tweaks
+sudo apt install gnome-tweaks gnome-shell-extensions
+
+# Installer des thèmes populaires
+sudo apt install yaru-theme-gtk yaru-theme-icon
+
+# Lancer
+gnome-tweaks
+```
 
 ---
 
 <a name="dépannage"></a>
-## 🔧 Dépannage
+## 🔧 Dépannage Ubuntu 24.04
 
 ### Problème : "Secure Boot" empêche le démarrage
 
@@ -335,9 +462,9 @@ fotso-DevOps login: _
 2. Security → Secure Boot → **Disabled**
 3. Sauvegarde et redémarre
 
-### Problème : Écran noir après l'installation
+### Problème : Écran noir après l'installation (Nvidia)
 
-**Solution (Nvidia) :**
+**Solution 24.04 :**
 1. Au menu GRUB, appuie sur `e`
 2. Trouve la ligne avec `quiet splash`
 3. Ajoute `nomodeset` après
@@ -345,37 +472,55 @@ fotso-DevOps login: _
 
 **Puis installe les drivers Nvidia :**
 ```bash
-sudo ubuntu-drivers autoinstall
+# 24.04 a un meilleur support Nvidia !
+sudo ubuntu-drivers list
+sudo ubuntu-drivers install
+
+# Ou spécifique
+sudo apt install nvidia-driver-550
+
 sudo reboot
 ```
 
 ### Problème : WiFi ne fonctionne pas
 
-**Solution :**
+**Solution 24.04 :**
 ```bash
 # Vérifier la carte réseau
 lspci | grep -i network
 
 # Installer les drivers manquants
 sudo apt install linux-firmware
+sudo apt install firmware-realtek  # Si Realtek
+sudo apt install firmware-iwlwifi  # Si Intel
+
 sudo reboot
 ```
+
 ### Problème : Son ne fonctionne pas
 
-**Solution :**
+**Solution 24.04 :**
 ```bash
-# Réinstaller les pilotes audio
-sudo apt remove --purge alsa-base pulseaudio
-sudo apt install alsa-base pulseaudio
+# 24.04 utilise PipeWire par défaut
+sudo apt install pipewire pipewire-audio-client-libraries
+
+# Redémarrer PipeWire
+systemctl --user restart pipewire pipewire-pulse
+
+# Si ça ne marche toujours pas
 sudo alsa force-reload
 ```
 
-### Problème : Résolution d'écran incorrecte (VM)
+### Problème : Trackpad ne fonctionne pas
 
 **Solution :**
 ```bash
-# Installer Guest Additions
-sudo apt install virtualbox-guest-utils virtualbox-guest-x11
+# Installer les drivers Synaptics
+sudo apt install xserver-xorg-input-synaptics
+
+# Ou libinput (plus moderne)
+sudo apt install xserver-xorg-input-libinput
+
 sudo reboot
 ```
 
@@ -384,6 +529,7 @@ sudo reboot
 ## 📚 Ressources supplémentaires
 
 ### Documentation officielle
+- **Ubuntu 24.04 Release Notes** : https://wiki.ubuntu.com/NobleNumbat/ReleaseNotes
 - **Ubuntu Desktop Guide** : https://help.ubuntu.com/
 - **Ubuntu Wiki** : https://wiki.ubuntu.com/
 
@@ -392,38 +538,7 @@ sudo reboot
 - **Ubuntu Forums** : https://ubuntuforums.org/
 - **r/Ubuntu** : https://reddit.com/r/Ubuntu
 
-### Vidéos (YouTube)
-- Recherche : "Ubuntu 22.04 LTS installation tutorial"
+### Nouveautés Ubuntu 24.04
+- **What's New** : https://ubuntu.com/blog/ubuntu-24-04-noble-numbat
 
 ---
-
-## ✅ Checklist finale
-
-Vérifie que tout est en place :
-
-- [ ] Ubuntu démarre correctement
-- [ ] Connexion Internet fonctionne
-- [ ] Compte utilisateur configuré
-- [ ] Système à jour (`sudo apt update && sudo apt upgrade`)
-- [ ] Git installé et configuré
-- [ ] Firewall activé
-
-**Si tout est coché : Félicitations ! 🎉**
-
----
-
-## 🚀 Prochaine étape
-
-Maintenant que Ubuntu est installé, passe à :
-
-👉 **[Installation de l'environnement de développement](../installation_stack/setup_stack.sh)**
-
-Ou continue avec :
-
-👉 **[Module 2 : Commandes de base Linux](01-commandes-base.md)**
-
----
-
-**Guide créé pour l'équipe - Version 1.0**
-
-*En cas de problème : demande de l'aide  a votre mentor*

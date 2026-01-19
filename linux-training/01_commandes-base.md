@@ -213,7 +213,5 @@ find /var/log -mtime -7
 locate passwd
 ```
 
-## 🎯 Challenge
 
-Consultez le dossier [`challenge/`](./challenge/) pour réaliser un exercice final permettant de valider vos compétences à l'aide de tests automatisés.
 

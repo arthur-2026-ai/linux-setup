@@ -36,6 +36,7 @@ APT (pour Advanced Packaging Tool) est un système de gestion de paquets puissan
 sudo apt update        # Met à jour la liste des paquets disponibles
 sudo apt upgrade       # Met à jour les paquets installés
 sudo apt full-upgrade  # Met à jour + gère les dépendances complexes
+```
 * `apt install <paquet>` : Installe un paquet (et ses dépendances).
 * `apt remove <paquet>` : Supprime un paquet en gardant la configuration.
 * `apt purge <paquet>` : Supprime un paquet + sa configuration.
@@ -171,13 +172,6 @@ installation avec :
   ```bash
   docker --version
   ```
-
----
-
-## 🚀 Challenge à valider
-
-📂 Rendez-vous dans le dossier [`challenge/`](./challenge/README.md) pour
-découvrir votre mission finale !
 
 ---
 

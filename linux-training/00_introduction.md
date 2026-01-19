@@ -108,6 +108,7 @@ clear
 
 ### Exercice
 
+* ouvrez le terminal (CTRL+ALT+T)
 * Naviguer jusqu’au dossier personnel
 * Lister les fichiers cachés
 
@@ -444,4 +445,4 @@ Les erreurs, elles, sont signalées explicitement.
 
 **Bonne formation ! 🚀**
 
-*Module créé pour l'équipe - Version 1.0*
+*Module créé pour l'équipe d'ORION - Version 1.0*

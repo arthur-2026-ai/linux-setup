@@ -130,40 +130,40 @@ sudo commande
 
 Règles d’or
 
-❌ sudo rm -rf /
-❌ sudo chmod -R 777 .
-❌ coder avec sudo
-❌ installer des libs globales inutilement
+* ❌ sudo rm -rf /
+* ❌ sudo chmod -R 777 .
+* ❌ coder avec sudo
+* ❌ installer des libs globales inutilement
 
 👉 sudo = administration, pas développement.
 
 ## 8️⃣ Erreurs de sécurité classiques (INTERDITES)
 
-❌ chmod 777
-❌ chmod -R 777
-❌ travailler en root
-❌ donner tous les droits “pour aller vite”
+* ❌ chmod 777
+* ❌ chmod -R 777
+* ❌ travailler en root
+* ❌ donner tous les droits “pour aller vite”
 
 👉 Anti-patterns professionnels.
 
  ## 9️⃣ Bonnes pratiques startup / équipe
 
-Structure recommandée :
+* Structure recommandée :
 
 /home/dev/workspace
 
 
-Propriétaire : utilisateur
+* Propriétaire : utilisateur
 
 Groupe : dev
 
-Permissions projet :
+* Permissions projet :
 
 ```
 chmod -R 775 projet
 ```
 
-Scripts :
+* Scripts :
 ```
 chmod +x *.sh
 ```
@@ -177,8 +177,8 @@ Clés privées protégées
 ```
 chmod 600 ~/.ssh/id_rsa
 ```
-🧪 Exercices pratiques (OBLIGATOIRES)
-Exercice 1 — Permissions fichier
+## 🧪 Exercices pratiques (OBLIGATOIRES)
+### Exercice 1 — Permissions fichier
 ```
 mkdir secure-test
 cd secure-test
@@ -187,7 +187,7 @@ chmod 640 test.txt
 ls -l
 ```
 
-Exercice 2 — Script exécutable
+### Exercice 2 — Script exécutable
 ```
 nano hello.sh
 ```
@@ -199,22 +199,15 @@ echo "Hello secure world"
 chmod +x hello.sh
 ./hello.sh
 ```
-Exercice 3 — Projet partagé
+### Exercice 3 — Projet partagé
 
-Créer un dossier projet
+* Créer un dossier projet
 
-Appliquer 775
+* Appliquer 775
 
-Expliquer pourquoi ce choix
+* Expliquer pourquoi ce choix
 
-✅ Validation du module
+* justifier pourquoi 777 est dangereux
 
-Le développeur sait :
 
-lire un ls -l
 
-expliquer rwx
-
-utiliser chmod proprement
-
-justifier pourquoi 777 est dangereux
