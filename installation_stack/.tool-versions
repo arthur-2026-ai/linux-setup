@@ -1,9 +1,4 @@
 
-
-# Java Development Kit
-# Ubuntu 24.04 supporte JDK 21
-java 21.0.3
-
 # Kotlin
 # Version stable compatible avec JDK 21
 kotlin 2.0.0

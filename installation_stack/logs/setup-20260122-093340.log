@@ -1,0 +1,14 @@
+[2026-01-22 09:33:40] [STEP] Vérifications préalables
+[2026-01-22 09:34:14] [SUCCESS] Vérifications terminées
+[2026-01-22 09:34:14] [STEP] Mise à jour du système
+[2026-01-22 09:35:31] [SUCCESS] Système mis à jour et packages essentiels installés
+[2026-01-22 09:35:31] [STEP] Installation de Docker Engine (procédure officielle)
+[2026-01-22 09:35:31] [STEP] Installation de ASDF Version Manager vv0.16.0
+[2026-01-22 09:35:31] [STEP] Installation des plugins ASDF
+[2026-01-22 09:35:31] [SUCCESS] Plugins ASDF installés
+[2026-01-22 09:35:31] [STEP] Installation de Visual Studio Code
+[2026-01-22 09:35:31] [STEP] Installation d'IntelliJ IDEA (édition unifiée 2025.3+)
+[2026-01-22 09:35:31] [STEP] Installation de Postman (via Snap - méthode officielle)
+[2026-01-22 09:35:31] [STEP] Installation d'Android Studio (via Snap - méthode officielle 2026)
+[2026-01-22 09:35:31] [STEP] Installation de MongoDB 8.0 (support natif Ubuntu 24.04)
+[2026-01-22 09:35:31] [STEP] Installation d'outils supplémentaires DevOps

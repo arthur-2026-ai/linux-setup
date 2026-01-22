@@ -1,415 +1,284 @@
-# 🚀 Installation Stack - Kotlin & Kobweb (ASDF)
+# 🚀 Setup Environnement DEV/DEVOPS - Ubuntu 24.04 LTS
 
-> Installation automatisée via **ASDF** - Simple, Maintenable, Scalable  
-> **Optimisé pour Ubuntu 24.04 LTS (Noble Numbat)**
-
-## 🎯 Pourquoi cette approche ?
-
-### ✅ Avantages ASDF
-
-- **Simple** : Un seul outil pour gérer toutes les versions
-- **Maintenable** : Versions centralisées dans `.tool-versions`
-- **Scalable** : Ajouter un outil = 3 lignes de code
-- **Reproductible** : Même env sur toutes les machines
-- **Pas de conflits** : Isolation complète par projet
-
-### 🆚 Comparaison
-```
-| Aspect                        | Approche manuelle | **ASDF**       |
-|-------------------------------|-------------------|----------------|
-| Scripts                       | 15+ fichiers      | **1 fichier**  |
-| Maintenance                   | Complexe          | **Simple**     |
-| Ajouter outil                 | 50+ lignes        | **3 lignes**   |
-| Conflits versions             | Fréquents         | **Jamais**     |
-| Versions par projet           | Difficile         | **Automatique**|
-```
----
-
-## 📁 Structure du projet
-
-```
-installation_stack/
-├── setup.sh              # 🎯 Script unique (ASDF)
-├── .tool-versions        # 📋 Versions centralisées
-├── logs/                 # 📝 Logs d'installation
-└── README.md             # 📖 Ce fichier
-```
+Script d'installation automatique pour configurer un environnement de développement complet sur Ubuntu 24.04 LTS.
 
 ---
 
-## 🛠️ Options d'installation
+## 📋 Table des matières
 
-### Installation complète (par défaut)
+- [Prérequis](#-prérequis)
+- [Installation rapide](#-installation-rapide)
+- [Modes d'installation](#-modes-dinstallation)
+- [Dépannage](#-dépannage)
 
-rendre le script executable
+---
+
+## ✅ Prérequis
+
+- **Système d'exploitation :** Ubuntu 24.04 LTS (Noble Numbat)
+- **Droits :** Utilisateur avec privilèges sudo (ne PAS exécuter en root)
+- **Espace disque :** 
+  - Minimal : 1 GB
+  - Dev : 3 GB
+  - Full : 15 GB (recommandé)
+- **Connexion internet** : Requise
+
+---
+
+## 🚀 Installation rapide
+
+### 1. Télécharger le script
+
+```bash
+# Cloner le repository (ou télécharger setup.sh)
+git clone https://github.com/Orion-237/Setup_Linux.git
+cd installation_stack/
+```
+
+### 2. Rendre le script exécutable
+
 ```bash
 chmod +x setup.sh
-
+chmod +x verify_install.sh
 ```
+
+### 3. Lancer l'installation apres avoir installer le systeme
 
 ```bash
-./setup.sh
+# Installation complète (recommandée)
+./setup.sh --full
 ```
 
-Installe :
-- ✅ ASDF
-- ✅ Java 21, Kotlin 2.0, Gradle 8.8, Node.js 22, Python 3.12
-- ✅ Docker 26+
-- ✅ VS Code + IntelliJ IDEA Community
+**⏱️ Temps d'installation :** 5-15 minutes selon votre connexion
 
-### Installation minimale
+---
+
+## 📦 Modes d'installation
+
+Le script propose 3 modes d'installation :
+
+### Mode 1 : Minimal (Docker uniquement)
 
 ```bash
 ./setup.sh --minimal
 ```
 
-Installe uniquement ASDF + outils de développement.
+**Installe :**
+- Docker Engine
+- Docker Compose
 
-### Sans Docker
+**Espace requis :** ~1 GB
+
+---
+
+### Mode 2 : Dev (Développement)
 
 ```bash
-./setup.sh --skip-docker
+./setup.sh --dev
 ```
 
-### Sans IDEs
+**Installe :**
+- Docker Engine + Docker Compose
+- ASDF Version Manager (Java, Node.js, Python, Kotlin, Gradle)
+- Visual Studio Code
+- IntelliJ IDEA Community
+- Postman
+
+**Espace requis :** ~3 GB
+
+---
+
+### Mode 3 : Full (Complet) 🌟 RECOMMANDÉ
 
 ```bash
-./setup.sh --skip-ide
+./setup.sh --full
 ```
 
-### Combinaisons
+**Installe tout ce qui est dans Dev, plus :**
+- Android Studio
+- MongoDB 8.0
+- Outils DevOps supplémentaires (nmap, httpie, shellcheck, eza, etc.)
+
+**Espace requis :** ~15 GB (incluant SDK Android)
+
+---
+
+### Option : Docker Desktop
 
 ```bash
-./setup.sh --skip-docker --skip-ide  # ASDF + tools seulement
+# Ajouter Docker Desktop à n'importe quel mode
+./setup.sh --full --docker-desktop
+```
+---
+
+## 📂 Structure des fichiers
+
+```
+.
+├── setup.sh              # Script principal
+├── README.md             # Ce fichier
+└── logs/                 # Logs d'installation (créé automatiquement)
+    └── setup-YYYYMMDD-HHMMSS.log
 ```
 
 ---
 
-## 📋 Versions installées
+## 📝 Logs d'installation
 
-Les versions sont définies dans `.tool-versions` :
+Les logs détaillés sont sauvegardés automatiquement :
 
 ```bash
-cat .tool-versions
+# Voir les logs
+ls -lt logs/
 
-# Sortie:
-java openjdk-21.0.3
-kotlin 2.0.0
-gradle 8.8
-nodejs 22.2.0
-python 3.12.3
+# Lire le dernier log
+cat logs/setup-*.log | tail -100
+
+# Rechercher des erreurs
+grep -i "error" logs/setup-*.log
 ```
 
 ---
 
-## 🔧 Gestion des versions avec ASDF
+## 🔧 Dépannage
 
-### Commandes essentielles
-
-```bash
-# Voir les versions actives
-asdf current
-
-# Lister toutes les versions disponibles d'un outil
-asdf list all java
-asdf list all kotlin
-
-# Installer une version spécifique
-asdf install java 21.0.4
-asdf install kotlin 2.0.10
-
-# Changer la version globale (toute la machine)
-asdf global java 21.0.4
-
-# Définir une version locale (projet actuel uniquement)
-asdf local kotlin 2.0.10  # Crée/modifie .tool-versions
-
-# Mettre à jour un plugin
-asdf plugin update java
-
-# Désinstaller une version
-asdf uninstall kotlin 1.9.22
-```
-
-### Vérifier l'installation
-
-```bash
-# Via ASDF
-asdf current
-
-# Vérification manuelle
-java -version
-kotlin -version
-gradle --version
-node --version
-python3 --version
-```
-
----
-
-## ➕ Ajouter un nouvel outil
-
-C'est **ultra simple** avec ASDF ! Exemple : ajouter Golang
-
-### Étape 1 : Ajouter le plugin dans `setup.sh`
-
-```bash
-# Dans la section "ASDF PLUGINS", ajouter:
-[golang]="https://github.com/asdf-community/asdf-golang.git"
-```
-
-### Étape 2 : Ajouter la version dans `.tool-versions`
-
-```bash
-echo "golang 1.22.3" >> .tool-versions
-```
-
-### Étape 3 : Installer
-
-```bash
-asdf plugin-add golang https://github.com/asdf-community/asdf-golang.git
-asdf install golang 1.22.3
-```
-
-**C'est tout !** 🎉 Golang est installé et géré par ASDF.
-
-### Outils disponibles
-
-Plus de 500 plugins disponibles : https://github.com/asdf-vm/asdf-plugins
-
-Populaires :
-- `ruby`, `python`, `nodejs`, `java`, `kotlin`, `golang`
-- `rust`, `elixir`, `php`, `lua`, `terraform`
-- `kubectl`, `helm`, `awscli`, `gcloud`
-
----
-
-## 🔄 Workflow par projet
-
-### Projet A : Kotlin 1.9 + Node 18
-
-```bash
-cd ~/projects/projet-A
-echo "kotlin 1.9.24" > .tool-versions
-echo "nodejs 18.20.0" >> .tool-versions
-asdf install
-```
-
-### Projet B : Kotlin 2.0 + Node 22
-
-```bash
-cd ~/projects/projet-B
-echo "kotlin 2.0.0" > .tool-versions
-echo "nodejs 22.2.0" >> .tool-versions
-asdf install
-```
-
-**Pas de conflit !** Chaque projet a ses versions isolées. 🎯
-
----
-
-## ✅ Vérification complète
-
-```bash
-# Versions ASDF
-asdf current
-
-# Outils système
-java -version      # openjdk 21.0.3
-kotlin -version    # Kotlin version 2.0.0
-gradle --version   # Gradle 8.8
-node --version     # v22.2.0
-python3 --version  # Python 3.12.3
-
-# Docker (si installé)
-docker --version
-
-# IDEs (si installés)
-code --version
-snap list | grep intellij
-```
-
----
-
-## 🐛 Dépannage
-
-### Problème : Commande non trouvée après installation
+### Problème : "Permission denied" avec Docker
 
 **Solution :**
 ```bash
+# Vérifier que vous êtes dans le groupe docker
+groups | grep docker
+
+# Si absent, ajouter et redémarrer
+sudo usermod -aG docker $USER
+sudo reboot
+```
+
+---
+
+### Problème : "asdf: command not found"
+
+**Solution :**
+```bash
+# Recharger la configuration bash
 source ~/.bashrc
-# ou
-exec bash
+
+# Ou se déconnecter/reconnecter
 ```
 
-### Problème : Version incorrecte utilisée
+---
+
+### Problème : MongoDB ne démarre pas
 
 **Solution :**
 ```bash
-# Vérifier quelle version est active
-asdf current
+# Démarrer le service
+sudo systemctl start mongod
 
-# Forcer reshim
-asdf reshim
+# Activer au démarrage
+sudo systemctl enable mongod
 
-# Définir la version globale
-asdf global kotlin 2.0.0
+# Voir les erreurs
+sudo journalctl -u mongod -n 50
 ```
 
-### Problème : Plugin ne s'installe pas
+---
+
+### Problème : Espace disque insuffisant
 
 **Solution :**
 ```bash
-# Mettre à jour la liste des plugins
-asdf plugin update --all
+# Vérifier l'espace disponible
+df -h
 
-# Réinstaller le plugin
-asdf plugin remove kotlin
-asdf plugin add kotlin https://github.com/asdf-community/asdf-kotlin.git
+# Nettoyer si nécessaire
+sudo apt-get autoremove
+sudo apt-get clean
+docker system prune -a  # Nettoie Docker (attention : supprime images)
 ```
 
-### Problème : Java non trouvé malgré ASDF
+---
+
+### Problème : Installation échoue sur un paquet
 
 **Solution :**
 ```bash
-# Vérifier l'installation
-asdf list java
+# Mettre à jour la liste des paquets
+sudo apt-get update
 
-# Réinstaller si nécessaire
-asdf install java openjdk-21.0.3
-
-# Définir comme global
-asdf global java openjdk-21.0.3
-
-# Recharger
-source ~/.bashrc
+# Relancer l'installation
+./setup.sh --full
 ```
 
 ---
 
-## 🔄 Migration depuis installation manuelle
+## 🆘 Besoin d'aide ?
 
-Si tu as déjà des outils installés manuellement :
-
-```bash
-# 1. Désinstaller les versions manuelles (optionnel)
-sudo apt remove openjdk-* gradle kotlin
-
-# 2. Nettoyer les configurations
-rm -rf ~/.gradle ~/.kotlin ~/.m2
-
-# 3. Lancer setup.sh
-./setup.sh
-
-# 4. ASDF prend le relais !
-```
+1. **Consulter les logs :** `cat logs/setup-*.log`
+2. **Vérifier l'espace disque :** `df -h`
+3. **Vérifier la connexion internet :** `ping -c 3 google.com`
+4. **Réexécuter le script :** Le script est idempotent, vous pouvez le relancer sans risque
 
 ---
 
-## 📊 Avantages Ubuntu 24.04 LTS
-```
-| Feature        | Bénéfice                             |
-|----------------|--------------------------------------|
-| **Kernel 6.8** | Support matériel 2024 (WiFi 7, USB4) |
-| **Python 3.12**| +20% performance native              |
-| **GCC 13**     | C++23 complet                        |
-| **Support LTS**| Jusqu'en 2029 (5 ans)                |
-| **PipeWire**   | Audio moderne                        |
-```
----
+## 🎯 Prochaines étapes recommandées
 
-## 🎓 Ressources
+1. **Configurer Git**
+   ```bash
+   git config --global user.name "Votre Nom"
+   git config --global user.email "votre@email.com"
+   ```
 
-### Documentation ASDF
-- Site officiel : https://asdf-vm.com/
-- Guide démarrage : https://asdf-vm.com/guide/getting-started.html
-- Plugins : https://github.com/asdf-vm/asdf-plugins
+2. **Installer des versions de langages avec ASDF**
+   ```bash
+   asdf install nodejs latest
+   asdf install java openjdk-21
+   asdf install python 3.12.1
+   ```
 
-### Documentation interne
-- **Formation Linux** : `../formation-linux/`
-- **Conventions équipe** : `../docs/CONVENTIONS.md`
-- **Workflow Git** : `../docs/GIT_WORKFLOW.md`
+3. **Installer des extensions VS Code**
+   ```bash
+   code --install-extension ms-python.python
+   code --install-extension ms-vscode.java-pack
+   code --install-extension dbaeumer.vscode-eslint
+   ```
 
-### Support
-- **Slack** : #dev-help
-- **Logs** : `logs/setup-*.log`
-
----
-
-## 🎯 Exemples concrets
-
-### Créer un projet Kotlin
-
-```bash
-# 1. Créer le dossier
-mkdir my-kotlin-app && cd my-kotlin-app
-
-# 2. Définir les versions locales
-cat > .tool-versions << EOF
-java openjdk-21.0.3
-kotlin 2.0.0
-gradle 8.8
-EOF
-
-# 3. Installer les versions
-asdf install
-
-# 4. Vérifier
-asdf current
-
-# 5. Créer le projet
-gradle init --type kotlin-application
-```
-
-### Tester différentes versions
-
-```bash
-# Terminal 1 : Projet avec Kotlin 1.9
-cd projet-ancien
-asdf local kotlin 1.9.24
-kotlin -version  # 1.9.24
-
-# Terminal 2 : Projet avec Kotlin 2.0
-cd projet-nouveau
-asdf local kotlin 2.0.0
-kotlin -version  # 2.0.0
-```
-
-Pas de conflit ! 🎉
+4. **Télécharger des images Docker utiles**
+   ```bash
+   docker pull ubuntu:24.04
+   docker pull node:lts
+   docker pull python:3.12
+   docker pull mongo:8.0
+   ```
 
 ---
 
-## 📝 Checklist post-installation
+## 📚 Ressources officielles
 
-- [ ] `./setup.sh` exécuté avec succès
-- [ ] `source ~/.bashrc` fait
-- [ ] `asdf current` affiche les bonnes versions
-- [ ] `java -version` fonctionne
-- [ ] `kotlin -version` fonctionne
-- [ ] `gradle --version` fonctionne
-- [ ] Premier projet créé et testé
-
-**Tout est coché ? Prêt à développer ! 🚀**
-
----
-
-## 🤝 Contribuer
-
-Pour améliorer ce setup :
-
-1. Fork le projet
-2. Crée une branche : `git checkout -b feature/mon-amelioration`
-3. Teste sur Ubuntu 24.04 propre
-4. Soumets une PR
+- **Docker :** https://docs.docker.com/
+- **ASDF :** https://asdf-vm.com/
+- **VS Code :** https://code.visualstudio.com/docs
+- **IntelliJ IDEA :** https://www.jetbrains.com/help/idea/
+- **Android Studio :** https://developer.android.com/studio
+- **MongoDB :** https://www.mongodb.com/docs/v8.0/
 
 ---
 
 ## 📄 Licence
 
-MIT License - Libre d'utilisation
+Ce script est fourni "tel quel" sans garantie. Utilisez-le à vos propres risques.
 
 ---
 
-**Version:** 1.0 (ASDF + Ubuntu 24.04 LTS ORION)  
-**Dernière mise à jour:** Janvier 2026  
-**Maintenu par:** L'équipe de développement D'ORION
+## 👥 Support
+
+Pour signaler un problème ou suggérer une amélioration :
+1. Consultez les logs d'installation
+2. Vérifiez la section [Dépannage](#-dépannage)
+3. Ouvrez une issue sur le repository
+
+---
+
+**Version :** 2026.1  
+**Dernière mise à jour :** 22 janvier 2026  
+**Système supporté :** Ubuntu 24.04 LTS (Noble Numbat)

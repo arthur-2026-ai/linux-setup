@@ -1,0 +1,18 @@
+[2026-01-22 09:51:01] [STEP] Vérifications préalables
+[2026-01-22 09:51:09] [SUCCESS] Vérifications terminées
+[2026-01-22 09:51:09] [STEP] Mise à jour du système
+[2026-01-22 09:51:16] [SUCCESS] Système mis à jour et packages essentiels installés
+[2026-01-22 09:51:16] [STEP] Installation de Docker Engine (procédure officielle)
+[2026-01-22 09:51:16] [STEP] Installation de ASDF Version Manager vv0.16.0
+[2026-01-22 09:51:16] [STEP] Installation des plugins ASDF
+[2026-01-22 09:51:16] [SUCCESS] Plugins ASDF installés
+[2026-01-22 09:51:16] [STEP] Installation de Visual Studio Code
+[2026-01-22 09:51:16] [STEP] Installation d'IntelliJ IDEA (édition unifiée 2025.3+)
+[2026-01-22 09:51:16] [SUCCESS] IntelliJ IDEA installé (édition unifiée 2025.3+)
+[2026-01-22 09:51:16] [STEP] Installation de Postman (via Snap - méthode officielle)
+[2026-01-22 09:51:16] [STEP] Installation d'Android Studio (via Snap - méthode officielle 2026)
+[2026-01-22 09:51:16] [STEP] Installation de MongoDB 8.0 (support natif Ubuntu 24.04)
+[2026-01-22 09:51:16] [STEP] Installation d'outils supplémentaires DevOps
+[2026-01-22 09:51:25] [SUCCESS] Outils supplémentaires installés
+[2026-01-22 09:51:25] [SUCCESS] Setup complet terminé à jeu. 22 janv. 2026 09:51:25 WAT
+[2026-01-22 09:51:25] [WARN] IMPORTANT: Déconnexion/reconnexion requise pour finaliser l'installation
