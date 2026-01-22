@@ -45,8 +45,12 @@ chmod +x verify_install.sh
 ### 3. Lancer l'installation apres avoir installer le systeme
 
 ```bash
-# Installation complète (recommandée)
-./setup.sh --full
+./setup.sh --full --docker-desktop
+```
+Apres l'execution de setup.sh ..utiliser le verify_instal.sh pour verification
+
+```bash
+./verify_install.sh
 ```
 
 **⏱️ Temps d'installation :** 5-15 minutes selon votre connexion

@@ -1,0 +1,8 @@
+[2026-01-22 13:47:46] [STEP] Vérifications préalables
+[2026-01-22 13:47:52] [SUCCESS] Vérifications terminées
+[2026-01-22 13:47:52] [STEP] Mise à jour du système
+[2026-01-22 13:48:21] [SUCCESS] Système mis à jour et packages essentiels installés
+[2026-01-22 13:48:21] [STEP] Installation de Docker Engine (procédure officielle)
+[2026-01-22 13:48:21] [STEP] Installation de ASDF Version Manager vv0.16.0
+[2026-01-22 13:48:21] [STEP] Installation des plugins ASDF
+[2026-01-22 13:48:21] [STEP] Installation de Java (Temurin 21.0.x)...
