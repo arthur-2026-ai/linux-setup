@@ -31,7 +31,7 @@ Script d'installation automatique pour configurer un environnement de développe
 
 ```bash
 # Cloner le repository (ou télécharger setup.sh)
-git clone https://github.com/Orion-237/Setup_Linux.git
+git clone https://github.com/arthur-2026-ai/linux-setup.git
 cd installation_stack/
 ```
 
