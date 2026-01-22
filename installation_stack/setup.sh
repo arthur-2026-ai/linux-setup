@@ -223,6 +223,31 @@ sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 }
 
 # -----------------------------------------------------------------------------
+# INSTALLATION KOBWEB CLI (Kotlin Web Framework)
+# -----------------------------------------------------------------------------
+install_kobweb() {
+  step "Installation de Kobweb CLI"
+
+  if command -v kobweb >/dev/null 2>&1; then
+    echo "Kobweb est déjà installé."
+    return 0
+  fi
+
+  # Installation via le script officiel
+  curl -sSf https://raw.githubusercontent.com/varabyte/kobweb/main/install.sh | bash
+  
+  # Ajout au PATH pour la session actuelle
+  export PATH="$PATH:$HOME/.kobweb/bin"
+  
+  # Persistance du PATH
+  if ! grep -q ".kobweb/bin" ~/.bashrc; then
+    echo 'export PATH="$PATH:$HOME/.kobweb/bin"' >> ~/.bashrc
+  fi
+
+  success "Kobweb CLI installé"
+}
+
+# -----------------------------------------------------------------------------
 # INSTALLATION DOCKER DESKTOP (OPTIONNEL)
 # -----------------------------------------------------------------------------
 install_docker_desktop() {
@@ -416,6 +441,17 @@ install_asdf_plugins() {
     fi
   done
 
+  # Installation de Java 21 (nécessaire pour Kobweb et Android Studio)
+  step "Installation de Java (Temurin 21.0.x)..."
+  JAVA_VERSION=$(asdf list all java | grep "temurin-21" | tail -1 | xargs)
+  asdf install java "$JAVA_VERSION"
+  asdf global java "$JAVA_VERSION"
+  
+  # Configuration de JAVA_HOME dans le .bashrc
+  if ! grep -q "ASDF_JAVA_RS_JAVA_HOME" ~/.bashrc; then
+    echo '. ~/.asdf/plugins/java/set-java-home.bash' >> ~/.bashrc
+  fi
+
   success "Plugins ASDF installés"
 }
 
@@ -599,6 +635,7 @@ main() {
       install_asdf_plugins
       install_vscode
       install_intellij
+      install_kobweb
       install_postman
       install_android_studio
       install_mongodb
