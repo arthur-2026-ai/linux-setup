@@ -1,0 +1,21 @@
+[2026-01-22 15:28:12] [STEP] Vérifications préalables
+[2026-01-22 15:28:12] [SUCCESS] Vérifications terminées
+[2026-01-22 15:28:12] [STEP] Mise à jour du système
+[2026-01-22 15:28:18] [SUCCESS] Système mis à jour et packages essentiels installés
+[2026-01-22 15:28:18] [STEP] Installation de Docker Engine (procédure officielle)
+[2026-01-22 15:28:18] [STEP] Installation de ASDF Version Manager vv0.16.0
+[2026-01-22 15:28:18] [STEP] Installation des plugins ASDF
+[2026-01-22 15:28:18] [STEP] Installation de Java (Temurin 21.0.x)...
+[2026-01-22 15:28:18] [SUCCESS] Java temurin-21.0.10+7.0.LTS configuré
+[2026-01-22 15:28:18] [SUCCESS] Plugins ASDF installés
+[2026-01-22 15:28:18] [STEP] Installation de Visual Studio Code
+[2026-01-22 15:28:18] [STEP] Installation d'IntelliJ IDEA (édition unifiée 2025.3+)
+[2026-01-22 15:28:18] [SUCCESS] IntelliJ IDEA installé (édition unifiée 2025.3+)
+[2026-01-22 15:28:18] [STEP] Installation de Postman (via Snap - méthode officielle)
+[2026-01-22 15:28:18] [STEP] Installation d'Android Studio (via Snap - méthode officielle 2026)
+[2026-01-22 15:28:19] [STEP] Installation de MongoDB 8.0 (support natif Ubuntu 24.04)
+[2026-01-22 15:28:19] [STEP] Installation d'outils supplémentaires DevOps
+[2026-01-22 15:28:21] [SUCCESS] Outils supplémentaires installés
+[2026-01-22 15:28:21] [STEP] Installation Kobweb CLI
+[2026-01-22 15:28:22] [INFO] Téléchargement depuis https://github.com/varabyte/kobweb-cli/releases/download/v0.9.21/kobweb-0.9.21.zip
+[2026-01-22 15:28:53] [SUCCESS] Kobweb téléchargé et extrait

@@ -1,0 +1,15 @@
+[2026-01-22 15:03:42] [STEP] Vérifications préalables
+[2026-01-22 15:03:42] [SUCCESS] Vérifications terminées
+[2026-01-22 15:03:42] [STEP] Mise à jour du système
+[2026-01-22 15:03:48] [SUCCESS] Système mis à jour et packages essentiels installés
+[2026-01-22 15:03:48] [STEP] Installation de Docker Engine (procédure officielle)
+[2026-01-22 15:03:48] [STEP] Installation de ASDF Version Manager vv0.16.0
+[2026-01-22 15:03:48] [STEP] Installation des plugins ASDF
+[2026-01-22 15:03:48] [STEP] Installation de Java (Temurin 21.0.x)...
+[2026-01-22 15:03:49] [SUCCESS] Java temurin-21.0.10+7.0.LTS configuré
+[2026-01-22 15:03:49] [SUCCESS] Plugins ASDF installés
+[2026-01-22 15:03:49] [STEP] Installation de Visual Studio Code
+[2026-01-22 15:03:49] [STEP] Installation d'IntelliJ IDEA (édition unifiée 2025.3+)
+[2026-01-22 15:03:49] [SUCCESS] IntelliJ IDEA installé (édition unifiée 2025.3+)
+[2026-01-22 15:03:49] [STEP] Installation Kobweb CLI
+[2026-01-22 15:03:50] [INFO] Dernière version Kobweb: v0.9.21

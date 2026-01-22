@@ -223,29 +223,21 @@ sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 }
 
 # -----------------------------------------------------------------------------
-# INSTALLATION KOBWEB CLI (Kotlin Web Framework)
+# FONCTION D'AJOUT SÛR AU .bashrc
 # -----------------------------------------------------------------------------
-install_kobweb() {
-  step "Installation de Kobweb CLI"
 
-  if command -v kobweb >/dev/null 2>&1; then
-    echo "Kobweb est déjà installé."
-    return 0
+safe_append_bashrc() {
+  local line="$1"
+  local bashrc="$HOME/.bashrc"
+
+  # Vérifie si la ligne existe déjà
+  if ! grep -qF "$line" "$bashrc"; then
+    echo "$line" >> "$bashrc"
+    echo "✅ Ajouté à $bashrc"
+  else
+    echo "ℹ️  Déjà présent dans $bashrc"
   fi
-
-  # Installation via le script officiel
-  curl -sSf https://raw.githubusercontent.com/varabyte/kobweb/main/install.sh | bash
-  
-  # Ajout au PATH pour la session actuelle
-  export PATH="$PATH:$HOME/.kobweb/bin"
-  
-  # Persistance du PATH
-  if ! grep -q ".kobweb/bin" ~/.bashrc; then
-    echo 'export PATH="$PATH:$HOME/.kobweb/bin"' >> ~/.bashrc
-  fi
-
-  success "Kobweb CLI installé"
-}
+}   
 
 # -----------------------------------------------------------------------------
 # INSTALLATION DOCKER DESKTOP (OPTIONNEL)
@@ -444,12 +436,21 @@ install_asdf_plugins() {
   # Installation de Java 21 (nécessaire pour Kobweb et Android Studio)
   step "Installation de Java (Temurin 21.0.x)..."
   JAVA_VERSION=$(asdf list all java | grep "temurin-21" | tail -1 | xargs)
-  asdf install java "$JAVA_VERSION"
-  asdf global java "$JAVA_VERSION"
   
-  # Configuration de JAVA_HOME dans le .bashrc
-  if ! grep -q "ASDF_JAVA_RS_JAVA_HOME" ~/.bashrc; then
-    echo '. ~/.asdf/plugins/java/set-java-home.bash' >> ~/.bashrc
+  if [ -n "$JAVA_VERSION" ]; then
+    asdf install java "$JAVA_VERSION" 2>/dev/null || echo "  Java $JAVA_VERSION déjà installé"
+    
+    # Utiliser 'asdf set' au lieu de 'asdf global' pour ASDF 0.16.0
+    cd "$HOME" && asdf set java "$JAVA_VERSION"
+    
+    # Configuration de JAVA_HOME dans le .bashrc
+    if ! grep -q "ASDF_JAVA_RS_JAVA_HOME" ~/.bashrc; then
+      echo '. ~/.asdf/plugins/java/set-java-home.bash' >> ~/.bashrc
+    fi
+    
+    success "Java $JAVA_VERSION configuré"
+  else
+    warn "Aucune version Temurin 21 trouvée"
   fi
 
   success "Plugins ASDF installés"
@@ -635,7 +636,6 @@ main() {
       install_asdf_plugins
       install_vscode
       install_intellij
-      install_kobweb
       install_postman
       install_android_studio
       install_mongodb
@@ -661,21 +661,25 @@ main() {
       echo "  ✓ Docker Engine v29.x"
       echo "  ✓ ASDF v0.16.0 (version Go - performances améliorées)"
       echo "  ✓ Plugins ASDF: Java, Node.js, Python, Kotlin, Gradle"
+      echo "  ✓ Java 21 (Temurin) configuré"
       echo "  ✓ Visual Studio Code"
       echo "  ✓ IntelliJ IDEA (édition unifiée 2025.3+)"
       echo "  ✓ Postman"
+      echo "  ✓ Kobweb CLI"
       [[ "$INSTALL_DOCKER_DESKTOP" == true ]] && echo "  ✓ Docker Desktop"
       ;;
     "full")
       echo "  ✓ Docker Engine v29.x"
       echo "  ✓ ASDF v0.16.0 (version Go - performances améliorées)"
       echo "  ✓ Plugins ASDF: Java, Node.js, Python, Kotlin, Gradle"
+      echo "  ✓ Java 21 (Temurin) configuré"
       echo "  ✓ Visual Studio Code"
       echo "  ✓ IntelliJ IDEA (édition unifiée 2025.3+)"
       echo "  ✓ Postman"
+      echo "  ✓ Kobweb CLI"
       echo "  ✓ Android Studio 2025.2.3+ (via Snap)"
       echo "  ✓ MongoDB 8.0 (support natif Ubuntu 24.04)"
-      echo "  ✓ Outils supplémentaires (nmap, httpie, shellcheck, exa, etc.)"
+      echo "  ✓ Outils supplémentaires (nmap, httpie, shellcheck, eza, etc.)"
       [[ "$INSTALL_DOCKER_DESKTOP" == true ]] && echo "  ✓ Docker Desktop"
       ;;
   esac
@@ -686,11 +690,14 @@ main() {
   echo "   - Utiliser Docker sans sudo (groupe docker)"
   echo "   - Activer ASDF et ses variables d'environnement"
   echo "   - Activer les variables d'environnement Android SDK"
+  echo "   - Activer Kobweb CLI"
   echo ""
   echo "2. Après reconnexion, vérifiez les installations:"
   echo "   docker --version"
   echo "   asdf --version"
+  echo "   asdf current java"
   echo "   code --version"
+  echo "   kobweb --version"
   echo "   snap list  # Pour voir Postman, Android Studio, IntelliJ"
   echo ""
   if [[ "$MODE" == "full" ]]; then
@@ -720,9 +727,11 @@ main() {
   echo "  - Docker Engine: v29.1.x"
   echo "  - Docker Compose: v2.39.x"
   echo "  - ASDF: v0.16.0 (Go - performances optimisées)"
+  echo "  - Java: Temurin 21.0.x"
   echo "  - MongoDB: 8.0 (support natif Ubuntu 24.04)"
   echo "  - Android Studio: 2025.2.3+"
   echo "  - IntelliJ IDEA: 2025.3+ (édition unifiée)"
+  echo "  - Kobweb: Latest"
   echo ""
   
   success "Setup complet terminé à $(date)"

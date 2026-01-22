@@ -1,0 +1,26 @@
+[2026-01-22 15:38:17] [STEP] Vérifications préalables
+[2026-01-22 15:38:17] [SUCCESS] Vérifications terminées
+[2026-01-22 15:38:17] [STEP] Mise à jour du système
+[2026-01-22 15:38:23] [SUCCESS] Système mis à jour et packages essentiels installés
+[2026-01-22 15:38:23] [STEP] Installation de Docker Engine (procédure officielle)
+[2026-01-22 15:38:23] [STEP] Installation de ASDF Version Manager vv0.16.0
+[2026-01-22 15:38:23] [STEP] Installation des plugins ASDF
+[2026-01-22 15:38:23] [STEP] Installation de Java (Temurin 21.0.x)...
+[2026-01-22 15:38:23] [SUCCESS] Java temurin-21.0.10+7.0.LTS configuré
+[2026-01-22 15:38:23] [SUCCESS] Plugins ASDF installés
+[2026-01-22 15:38:23] [STEP] Installation de Visual Studio Code
+[2026-01-22 15:38:23] [STEP] Installation d'IntelliJ IDEA (édition unifiée 2025.3+)
+[2026-01-22 15:38:23] [SUCCESS] IntelliJ IDEA installé (édition unifiée 2025.3+)
+[2026-01-22 15:38:23] [STEP] Installation de Postman (via Snap - méthode officielle)
+[2026-01-22 15:38:23] [STEP] Installation d'Android Studio (via Snap - méthode officielle 2026)
+[2026-01-22 15:38:23] [STEP] Installation de MongoDB 8.0 (support natif Ubuntu 24.04)
+[2026-01-22 15:38:23] [STEP] Installation d'outils supplémentaires DevOps
+[2026-01-22 15:38:26] [SUCCESS] Outils supplémentaires installés
+[2026-01-22 15:38:26] [STEP] Installation Kobweb CLI
+[2026-01-22 15:38:26] [SUCCESS] Kobweb est déjà installé : 
+ERROR: JAVA_HOME is set to an invalid directory: /home/arthur-fotso/DevOps/linux-setup
+
+Please set the JAVA_HOME variable in your environment to match the
+location of your Java installation.
+[2026-01-22 15:38:26] [SUCCESS] Setup complet terminé à jeu. 22 janv. 2026 15:38:26 WAT
+[2026-01-22 15:38:26] [WARN] IMPORTANT: Déconnexion/reconnexion requise pour finaliser l'installation
