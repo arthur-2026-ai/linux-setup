@@ -187,70 +187,44 @@ sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 # -----------------------------------------------------------------------------
 # INSTALLATION DOCKER DESKTOP (OPTIONNEL)
 # -----------------------------------------------------------------------------
-install_docker_desktop() {
-  step "Installation de Docker Desktop"
-
-  if dpkg -l | grep -q docker-desktop; then
-    echo "Docker Desktop déjà installé"
-    return 0
-  fi
-
-  DOCKER_DESKTOP_URL="https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb"
-  TEMP_DEB="$(mktemp).deb"
-  
-  wget -q --show-progress -O "$TEMP_DEB" "$DOCKER_DESKTOP_URL"
-  sudo apt-get install -y "$TEMP_DEB"
-  rm -f "$TEMP_DEB"
-  
-  success "Docker Desktop installé"
-}
-
-# -----------------------------------------------------------------------------
-# INSTALLATION JAVA
-# -----------------------------------------------------------------------------
 install_java() {
-  step "Installation Java 21 (APT only)"
+  step "Installation Java 21 (APT)"
 
-  # 1. Installer Java 21 s'il n'existe pas
+  # Installer Java si absent
   if ! command -v java >/dev/null 2>&1; then
     log_message "INFO" "Java absent, installation..."
     sudo apt-get update -y
     sudo apt-get install -y openjdk-21-jdk
   fi
 
-  # 2. Vérifier que java est bien enregistré
-  if ! update-alternatives --list java >/dev/null 2>&1; then
-    error "Java installé mais non enregistré dans update-alternatives"
-    return 1
-  fi
-
-  # 3. Forcer Java 21 comme version par défaut
+  # Forcer Java 21 comme défaut
   sudo update-alternatives --set java \
-    /usr/lib/jvm/java-21-openjdk-amd64/bin/java
+    /usr/lib/jvm/java-21-openjdk-amd64/bin/java 2>/dev/null || true
 
-  # 4. Déterminer JAVA_HOME automatiquement (méthode fiable)
+  # Déterminer JAVA_HOME proprement
   JAVA_PATH="$(readlink -f "$(command -v java)")"
   JAVA_HOME_PATH="$(dirname "$(dirname "$JAVA_PATH")")"
 
-  # 5. Nettoyage anciennes configs JAVA_HOME
+  # Nettoyage anciennes configs
   sed -i '/^export JAVA_HOME=/d' ~/.bashrc
   sed -i '/JAVA_HOME\/bin/d' ~/.bashrc
-  sed -i '/# Java (OpenJDK/d' ~/.bashrc
+  sed -i '/# Java/d' ~/.bashrc
 
-  # 6. Ajout propre et idempotent
+  # Ajout propre
   {
     echo ""
-    echo "# Java (OpenJDK 21)"
+    echo "# Java"
     echo "export JAVA_HOME=\"$JAVA_HOME_PATH\""
     echo 'export PATH="$PATH:$JAVA_HOME/bin"'
   } >> ~/.bashrc
 
-  # 7. Appliquer à la session courante
+  # Appliquer immédiatement
   export JAVA_HOME="$JAVA_HOME_PATH"
   export PATH="$PATH:$JAVA_HOME/bin"
 
-  success "Java 21 prêt — JAVA_HOME=$JAVA_HOME"
+  success "Java prêt — $(java -version 2>&1 | head -n1)"
 }
+
 
 # -----------------------------------------------------------------------------
 # INSTALLATION NODE.JS
