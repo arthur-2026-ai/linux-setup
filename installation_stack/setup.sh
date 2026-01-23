@@ -2,20 +2,18 @@
 set -euo pipefail
 
 ###############################################################################
-# setup.sh — Environnement DEV/DEVOPS PRO - Ubuntu 24.04 LTS
-# Basé sur les documentations officielles de chaque outil (Janvier 2026)
+# setup.sh — Environnement DEV/DEVOPS - Ubuntu 24.04 LTS
+# Installation directe des outils sans gestionnaire de versions
 #
 # Usage:
 #   ./setup.sh --minimal   # Docker uniquement
 #   ./setup.sh --dev       # + Outils développement
-#   ./setup.sh --full      # + MongoDB + Android Studio + Postman
-#   ./setup.sh --full --docker-desktop
+#   ./setup.sh --full      # + MongoDB + Android Studio
 ###############################################################################
 
 # -----------------------------------------------------------------------------
 # CONFIGURATION
 # -----------------------------------------------------------------------------
-ASDF_VERSION="v0.16.0"  
 MODE="full"
 INSTALL_DOCKER_DESKTOP=false
 
@@ -62,8 +60,8 @@ parse_args() {
         echo ""
         echo "Modes:"
         echo "  --minimal    : Docker uniquement"
-        echo "  --dev        : Docker + outils développement (ASDF, IDE)"
-        echo "  --full       : Tout + MongoDB + Android Studio + Postman"
+        echo "  --dev        : Docker + IDE + langages"
+        echo "  --full       : Tout + MongoDB + Android Studio"
         exit 0 ;;
       *) fail "Option inconnue: $1" ;;
     esac
@@ -77,42 +75,35 @@ parse_args() {
 prechecks() {
   step "Vérifications préalables"
 
-  # Vérifier l'utilisateur
-  [[ "$EUID" -eq 0 ]] && fail "Ne pas exécuter en tant que root. Utilisez un utilisateur normal avec sudo."
+  [[ "$EUID" -eq 0 ]] && fail "Ne pas exécuter en tant que root"
 
-  # Vérifier la distribution
   if [[ ! -f /etc/os-release ]]; then
     fail "Système d'exploitation non supporté"
   fi
 
   source /etc/os-release
   if [[ "$ID" != "ubuntu" ]] || [[ "$VERSION_ID" != "24.04" ]]; then
-    warn "Ce script est conçu pour Ubuntu 24.04 LTS (Noble Numbat)"
+    warn "Ce script est conçu pour Ubuntu 24.04 LTS"
     warn "Distribution détectée: $PRETTY_NAME"
-    read -p "Continuer quand même? (y/N) " -n 1 -r
+    read -p "Continuer? (y/N) " -n 1 -r
     echo
     [[ ! $REPLY =~ ^[Yy]$ ]] && exit 1
   fi
 
-  # Vérifier les privilèges sudo
   if ! sudo -v; then
-    fail "L'utilisateur n'a pas les privilèges sudo nécessaires"
+    fail "Privilèges sudo nécessaires"
   fi
 
-  # Vérifier l'espace disque
   local available_space
   available_space=$(df -h / | awk 'NR==2 {print $4}' | sed 's/G//')
   if [[ $available_space -lt 15 ]]; then
-    warn "Espace disque disponible faible: ${available_space}G"
-    warn "Au moins 15G recommandés pour une installation complète (Android Studio)"
-    read -p "Continuer quand même? (y/N) " -n 1 -r
+    warn "Espace disque faible: ${available_space}G (15G recommandés)"
+    read -p "Continuer? (y/N) " -n 1 -r
     echo
     [[ ! $REPLY =~ ^[Yy]$ ]] && exit 1
   fi
 
-  # Créer le dossier de logs
   mkdir -p "$LOG_DIR"
-
   success "Vérifications terminées"
 }
 
@@ -125,7 +116,6 @@ update_system() {
   sudo apt-get update -qq
   sudo apt-get upgrade -y
   
-  # Installer les packages essentiels pour Ubuntu 24.04
   sudo apt-get install -y \
     software-properties-common \
     apt-transport-https \
@@ -136,66 +126,42 @@ update_system() {
     lsb-release \
     git \
     build-essential \
-    libssl-dev \
-    zlib1g-dev \
-    libbz2-dev \
-    libreadline-dev \
-    libsqlite3-dev \
-    llvm \
-    libncurses-dev \
-    xz-utils \
-    tk-dev \
-    libxml2-dev \
-    libxmlsec1-dev \
-    libffi-dev \
-    liblzma-dev \
     jq \
     htop \
     net-tools \
-    dnsutils \
     unzip \
     zip \
     tree \
-    neovim \
+    vim \
     bat \
-    fd-find \
-    ripgrep \
-    file
+    ripgrep
   
-  success "Système mis à jour et packages essentiels installés"
+  success "Système mis à jour"
 }
 
 # -----------------------------------------------------------------------------
-# INSTALLATION DOCKER ENGINE (OFFICIELLE - Janvier 2026)
+# INSTALLATION DOCKER
 # -----------------------------------------------------------------------------
 install_docker() {
-  step "Installation de Docker Engine (procédure officielle)"
+  step "Installation de Docker Engine"
 
-  # Vérifier si Docker est déjà installé
-  if command -v docker >/dev/null && docker --version >/dev/null 2>&1; then
-    echo "Docker est déjà installé: $(docker --version)"
+  if command -v docker >/dev/null 2>&1; then
+    echo "Docker déjà installé: $(docker --version)"
     return 0
   fi
 
-  # 1. Nettoyer les anciennes installations
   sudo apt-get remove -y docker docker-engine docker.io containerd runc 2>/dev/null || true
-
-  # 2. Configurer le repository Docker
   sudo apt-get install -y ca-certificates curl gnupg
 
-  # Ajouter la clé GPG de Docker (format moderne 2026)
   sudo install -m 0755 -d /etc/apt/keyrings
   sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
     -o /etc/apt/keyrings/docker.asc
   sudo chmod a+r /etc/apt/keyrings/docker.asc
 
-  # Configurer le repository stable
   echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
-https://download.docker.com/linux/ubuntu \
-$(lsb_release -cs) stable" | \
+https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \
 sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-  # 3. Installer Docker Engine
   sudo apt-get update -qq
   sudo apt-get install -y \
     docker-ce \
@@ -204,40 +170,19 @@ sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
     docker-buildx-plugin \
     docker-compose-plugin
 
-  # 4. Configurer Docker pour l'utilisateur courant
   sudo groupadd docker 2>/dev/null || true
   sudo usermod -aG docker "$USER"
-
-  # 5. Démarrer et activer Docker
   sudo systemctl enable docker
   sudo systemctl start docker
 
-  # 6. Vérifier l'installation
   if sudo docker run --rm hello-world >/dev/null 2>&1; then
-    success "Docker Engine installé avec succès (v29.x)"
+    success "Docker installé"
   else
-    warn "Docker installé mais la vérification a échoué"
+    warn "Docker installé mais vérification échouée"
   fi
 
-  warn "Déconnexion/reconnexion nécessaire pour utiliser Docker sans sudo"
+  warn "Déconnexion/reconnexion nécessaire pour Docker sans sudo"
 }
-
-# -----------------------------------------------------------------------------
-# FONCTION D'AJOUT SÛR AU .bashrc
-# -----------------------------------------------------------------------------
-
-safe_append_bashrc() {
-  local line="$1"
-  local bashrc="$HOME/.bashrc"
-
-  # Vérifie si la ligne existe déjà
-  if ! grep -qF "$line" "$bashrc"; then
-    echo "$line" >> "$bashrc"
-    echo "✅ Ajouté à $bashrc"
-  else
-    echo "ℹ️  Déjà présent dans $bashrc"
-  fi
-}   
 
 # -----------------------------------------------------------------------------
 # INSTALLATION DOCKER DESKTOP (OPTIONNEL)
@@ -245,61 +190,311 @@ safe_append_bashrc() {
 install_docker_desktop() {
   step "Installation de Docker Desktop"
 
-  # Vérifier si Docker Desktop est déjà installé
   if dpkg -l | grep -q docker-desktop; then
-    echo "Docker Desktop est déjà installé"
+    echo "Docker Desktop déjà installé"
     return 0
   fi
 
-  # Télécharger la dernière version stable depuis le site officiel
   DOCKER_DESKTOP_URL="https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb"
   TEMP_DEB="$(mktemp).deb"
   
-  echo "Téléchargement de Docker Desktop depuis le site officiel..."
   wget -q --show-progress -O "$TEMP_DEB" "$DOCKER_DESKTOP_URL"
-  
-  # Installer Docker Desktop
   sudo apt-get install -y "$TEMP_DEB"
-  
-  # Nettoyer
   rm -f "$TEMP_DEB"
   
   success "Docker Desktop installé"
-  warn "Redémarrage recommandé pour une expérience complète"
 }
 
 # -----------------------------------------------------------------------------
-# INSTALLATION ANDROID STUDIO (SNAP - Méthode Officielle 2026)
+# INSTALLATION JAVA
 # -----------------------------------------------------------------------------
-install_android_studio() {
-  step "Installation d'Android Studio (via Snap - méthode officielle 2026)"
+install_java() {
+  step "Installation de Java 21"
 
-  # Vérifier si Android Studio est déjà installé via Snap
-  if snap list 2>/dev/null | grep -q "^android-studio\s"; then
-    echo "Android Studio est déjà installé via Snap"
+  if command -v java >/dev/null 2>&1; then
+    echo "Java déjà installé: $(java -version 2>&1 | head -n 1)"
+    
+    # Vérifier et corriger JAVA_HOME si nécessaire
+    if [[ ! -d "$JAVA_HOME" ]] || [[ -z "$JAVA_HOME" ]]; then
+      echo "Configuration de JAVA_HOME..."
+      JAVA_PATH=$(update-alternatives --query java | grep 'Value:' | cut -d' ' -f2)
+      JAVA_HOME_PATH=$(dirname $(dirname "$JAVA_PATH"))
+      
+      # Supprimer l'ancienne configuration incorrecte
+      sed -i '/^export JAVA_HOME=/d' ~/.bashrc 2>/dev/null || true
+      sed -i '/^export PATH=.*JAVA_HOME/d' ~/.bashrc 2>/dev/null || true
+      
+      # Ajouter la bonne configuration
+      echo '' >> ~/.bashrc
+      echo '# Java' >> ~/.bashrc
+      echo "export JAVA_HOME=\"$JAVA_HOME_PATH\"" >> ~/.bashrc
+      echo 'export PATH="$PATH:$JAVA_HOME/bin"' >> ~/.bashrc
+      
+      # Charger immédiatement pour la session actuelle
+      export JAVA_HOME="$JAVA_HOME_PATH"
+      export PATH="$PATH:$JAVA_HOME/bin"
+      
+      echo "JAVA_HOME configuré: $JAVA_HOME"
+    fi
+    
     return 0
   fi
 
-  # Vérifier si installé manuellement
-  if [[ -f /opt/android-studio/bin/studio.sh ]] || command -v android-studio >/dev/null 2>&1; then
-    echo "Android Studio est déjà installé (installation manuelle détectée)"
+  sudo apt-get install -y openjdk-21-jdk openjdk-21-jre
+  
+  # Déterminer automatiquement le chemin de Java
+  JAVA_PATH=$(update-alternatives --query java | grep 'Value:' | cut -d' ' -f2)
+  JAVA_HOME_PATH=$(dirname $(dirname "$JAVA_PATH"))
+  
+  if ! grep -q "JAVA_HOME" ~/.bashrc; then
+    echo '' >> ~/.bashrc
+    echo '# Java' >> ~/.bashrc
+    echo "export JAVA_HOME=\"$JAVA_HOME_PATH\"" >> ~/.bashrc
+    echo 'export PATH="$PATH:$JAVA_HOME/bin"' >> ~/.bashrc
+  fi
+  
+  # Charger immédiatement pour la session actuelle
+  export JAVA_HOME="$JAVA_HOME_PATH"
+  export PATH="$PATH:$JAVA_HOME/bin"
+
+  success "Java 21 installé - JAVA_HOME: $JAVA_HOME"
+}
+
+# -----------------------------------------------------------------------------
+# INSTALLATION NODE.JS
+# -----------------------------------------------------------------------------
+install_nodejs() {
+  step "Installation de Node.js LTS"
+
+  if command -v node >/dev/null 2>&1; then
+    echo "Node.js déjà installé: $(node --version)"
     return 0
   fi
 
-  # Installer snapd si nécessaire
+  curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+
+  success "Node.js LTS installé"
+}
+
+# -----------------------------------------------------------------------------
+# INSTALLATION PYTHON
+# -----------------------------------------------------------------------------
+install_python() {
+  step "Installation de Python 3.12"
+
+  if command -v python3.12 >/dev/null 2>&1; then
+    echo "Python 3.12 déjà installé"
+    return 0
+  fi
+
+  sudo add-apt-repository -y ppa:deadsnakes/ppa
+  sudo apt-get update -qq
+  sudo apt-get install -y \
+    python3.12 \
+    python3.12-venv \
+    python3.12-dev \
+    python3-pip
+
+  success "Python 3.12 installé"
+}
+
+# -----------------------------------------------------------------------------
+# INSTALLATION KOTLIN
+# -----------------------------------------------------------------------------
+install_kotlin() {
+  step "Installation de Kotlin"
+
+  if command -v kotlin >/dev/null 2>&1; then
+    echo "Kotlin déjà installé"
+    return 0
+  fi
+
+  sudo snap install kotlin --classic
+  success "Kotlin installé"
+}
+
+# -----------------------------------------------------------------------------
+# INSTALLATION GRADLE
+# -----------------------------------------------------------------------------
+install_gradle() {
+  step "Installation de Gradle"
+
+  if command -v gradle >/dev/null 2>&1; then
+    echo "Gradle déjà installé: $(gradle --version | head -n 1)"
+    return 0
+  fi
+
+  GRADLE_VERSION="8.11.1"
+  wget -q https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip
+  sudo unzip -q -d /opt/gradle gradle-${GRADLE_VERSION}-bin.zip
+  rm gradle-${GRADLE_VERSION}-bin.zip
+
+  if ! grep -q "gradle" ~/.bashrc; then
+    echo '' >> ~/.bashrc
+    echo '# Gradle' >> ~/.bashrc
+    echo "export PATH=\"\$PATH:/opt/gradle/gradle-${GRADLE_VERSION}/bin\"" >> ~/.bashrc
+  fi
+
+  success "Gradle ${GRADLE_VERSION} installé"
+}
+
+# -----------------------------------------------------------------------------
+# INSTALLATION KOBWEB (Framework Kotlin Web)
+# -----------------------------------------------------------------------------
+install_kobweb() {
+  step "Installation de Kobweb CLI"
+
+  # Vérifier que JAVA_HOME est correct
+  if [[ -z "$JAVA_HOME" ]] || [[ ! -d "$JAVA_HOME" ]]; then
+    echo "Configuration de JAVA_HOME pour Kobweb..."
+    JAVA_PATH=$(update-alternatives --query java | grep 'Value:' | cut -d' ' -f2)
+    export JAVA_HOME=$(dirname $(dirname "$JAVA_PATH"))
+    echo "JAVA_HOME défini: $JAVA_HOME"
+  fi
+
+  if command -v kobweb >/dev/null 2>&1; then
+    # Vérifier si Kobweb fonctionne correctement
+    if kobweb version >/dev/null 2>&1; then
+      echo "Kobweb déjà installé: $(kobweb version)"
+      return 0
+    else
+      echo "Kobweb présent mais non fonctionnel, réinstallation..."
+    fi
+  fi
+
+  # Installation via SDKMAN (méthode officielle recommandée)
+  if command -v sdk >/dev/null 2>&1; then
+    echo "Installation via SDKMAN..."
+    sdk install kobweb
+    success "Kobweb installé via SDKMAN"
+    return 0
+  fi
+
+  # Alternative: Téléchargement direct depuis GitHub
+  KOBWEB_VERSION="0.9.21"
+  KOBWEB_URL="https://github.com/varabyte/kobweb-cli/releases/download/v${KOBWEB_VERSION}/kobweb-${KOBWEB_VERSION}.zip"
+  TEMP_DIR="$(mktemp -d)"
+  
+  echo "Téléchargement de Kobweb ${KOBWEB_VERSION}..."
+  wget -q --show-progress -O "$TEMP_DIR/kobweb.zip" "$KOBWEB_URL"
+  
+  # Extraire dans /opt
+  sudo unzip -q "$TEMP_DIR/kobweb.zip" -d /opt/
+  rm -rf "$TEMP_DIR"
+  
+  # Ajouter au PATH
+  if ! grep -q "/opt/kobweb-${KOBWEB_VERSION}/bin" ~/.bashrc; then
+    # Supprimer les anciennes entrées Kobweb
+    sed -i '/# Kobweb/d' ~/.bashrc 2>/dev/null || true
+    sed -i '/kobweb.*\/bin/d' ~/.bashrc 2>/dev/null || true
+    
+    echo '' >> ~/.bashrc
+    echo '# Kobweb' >> ~/.bashrc
+    echo "export PATH=\"\$PATH:/opt/kobweb-${KOBWEB_VERSION}/bin\"" >> ~/.bashrc
+  fi
+  
+  # Créer un lien symbolique pour faciliter l'accès
+  sudo ln -sf /opt/kobweb-${KOBWEB_VERSION}/bin/kobweb /usr/local/bin/kobweb 2>/dev/null || true
+  
+  # Charger immédiatement pour la session actuelle
+  export PATH="$PATH:/opt/kobweb-${KOBWEB_VERSION}/bin"
+  
+  success "Kobweb ${KOBWEB_VERSION} installé"
+  echo ""
+  echo "ℹ️  Test: kobweb version"
+  if command -v kobweb >/dev/null 2>&1 && kobweb version >/dev/null 2>&1; then
+    echo "✓ Kobweb fonctionne: $(kobweb version)"
+  else
+    warn "Kobweb installé mais nécessite une reconnexion pour fonctionner"
+  fi
+  echo "📚 Documentation: https://kobweb.varabyte.com/"
+}
+
+# -----------------------------------------------------------------------------
+# INSTALLATION VS CODE
+# -----------------------------------------------------------------------------
+install_vscode() {
+  step "Installation de Visual Studio Code"
+
+  if command -v code >/dev/null 2>&1; then
+    echo "VS Code déjà installé"
+    return 0
+  fi
+
+  # Ajouter la clé GPG Microsoft
+  wget -qO- https://packages.microsoft.com/keys/microsoft.asc | \
+    gpg --dearmor > packages.microsoft.gpg
+  sudo install -D -o root -g root -m 644 packages.microsoft.gpg \
+    /etc/apt/keyrings/packages.microsoft.gpg
+  rm packages.microsoft.gpg
+  
+  # Ajouter le repository
+  echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/packages.microsoft.gpg] \
+https://packages.microsoft.com/repos/code stable main" | \
+sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
+  
+  # Installer VS Code en mode non-interactif
+  sudo apt-get update -qq
+  DEBIAN_FRONTEND=noninteractive sudo apt-get install -y code
+  
+  success "VS Code installé"
+}
+
+# -----------------------------------------------------------------------------
+# INSTALLATION INTELLIJ IDEA
+# -----------------------------------------------------------------------------
+install_intellij() {
+  step "Installation d'IntelliJ IDEA Community"
+
+  if snap list 2>/dev/null | grep -q "intellij-idea"; then
+    echo "IntelliJ IDEA déjà installé"
+    return 0
+  fi
+
   if ! command -v snap >/dev/null; then
-    echo "Installation de snapd..."
     sudo apt-get install -y snapd
     sudo systemctl enable --now snapd.socket
-    sudo ln -s /var/lib/snapd/snap /snap 2>/dev/null || true
     sleep 2
   fi
 
-  # Installer Android Studio via Snap (version 2025.2.3+)
-  echo "Installation d'Android Studio (cela peut prendre quelques minutes)..."
+  sudo snap install intellij-idea-community --classic
+  success "IntelliJ IDEA installé"
+}
+
+# -----------------------------------------------------------------------------
+# INSTALLATION POSTMAN
+# -----------------------------------------------------------------------------
+install_postman() {
+  step "Installation de Postman"
+
+  if snap list 2>/dev/null | grep -q "postman"; then
+    echo "Postman déjà installé"
+    return 0
+  fi
+
+  sudo snap install postman
+  success "Postman installé"
+}
+
+# -----------------------------------------------------------------------------
+# INSTALLATION ANDROID STUDIO
+# -----------------------------------------------------------------------------
+install_android_studio() {
+  step "Installation d'Android Studio"
+
+  if snap list 2>/dev/null | grep -q "android-studio"; then
+    echo "Android Studio déjà installé"
+    return 0
+  fi
+
+  if [[ -f /opt/android-studio/bin/studio.sh ]]; then
+    echo "Android Studio déjà installé (manuel)"
+    return 0
+  fi
+
   sudo snap install android-studio --classic
   
-  # Configurer les variables d'environnement Android SDK
   if ! grep -q "ANDROID_HOME" ~/.bashrc; then
     echo '' >> ~/.bashrc
     echo '# Android SDK' >> ~/.bashrc
@@ -307,295 +502,38 @@ install_android_studio() {
     echo 'export PATH="$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools"' >> ~/.bashrc
   fi
   
-  success "Android Studio installé via Snap (version 2025.2.3+)"
-  echo ""
-  echo "📱 Pour terminer l'installation d'Android Studio:"
-  echo "1. Lancez 'android-studio' depuis le terminal ou le menu applications"
-  echo "2. Suivez l'assistant de configuration"
-  echo "3. L'installation du SDK Android se fera automatiquement (~2-4GB)"
-  echo ""
-  warn "Note: Le premier lancement peut prendre quelques minutes"
+  success "Android Studio installé"
 }
 
 # -----------------------------------------------------------------------------
-# INSTALLATION POSTMAN (SNAP - Méthode Officielle)
-# -----------------------------------------------------------------------------
-install_postman() {
-  step "Installation de Postman (via Snap - méthode officielle)"
-
-  # Vérifier si Postman est déjà installé via Snap
-  if snap list 2>/dev/null | grep -q "^postman\s"; then
-    echo "Postman est déjà installé via Snap"
-    return 0
-  fi
-  
-  # Vérifier installation manuelle
-  if [[ -f /opt/Postman/app/postman ]] || command -v postman >/dev/null 2>&1; then
-    echo "Postman est déjà installé (installation manuelle détectée)"
-    return 0
-  fi
-
-  # Installer snapd si nécessaire
-  if ! command -v snap >/dev/null; then
-    echo "Installation de snapd..."
-    sudo apt-get install -y snapd
-    sudo systemctl enable --now snapd.socket
-    sudo ln -s /var/lib/snapd/snap /snap 2>/dev/null || true
-    sleep 2
-  fi
-  
-  # Installer Postman
-  sudo snap install postman
-  
-  success "Postman installé via Snap"
-  echo "Lancez Postman depuis le menu applications ou via 'postman' en terminal"
-}
-
-# -----------------------------------------------------------------------------
-# INSTALLATION ASDF (OFFICIELLE - Version 0.16.0)
-# -----------------------------------------------------------------------------
-install_asdf() {
-  step "Installation de ASDF Version Manager v$ASDF_VERSION"
-
-  # Vérifier si ASDF est déjà installé
-  if [[ -d "$HOME/.asdf" ]] && command -v asdf >/dev/null 2>&1; then
-    echo "ASDF est déjà installé"
-    return 0
-  fi
-
-  # Vérifier si Git est installé
-  if ! command -v git >/dev/null; then
-    sudo apt-get install -y git
-  fi
-
-  # Installer ASDF via Git (méthode officielle)
-  if [[ ! -d "$HOME/.asdf" ]]; then
-    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch "$ASDF_VERSION"
-  fi
-
-  # Configuration du shell
-  ASDF_SETUP='
-# ASDF - Version Manager
-if [ -d "$HOME/.asdf" ]; then
-  . "$HOME/.asdf/asdf.sh"
-  # Completions bash
-  if [ -f "$HOME/.asdf/completions/asdf.bash" ]; then
-    . "$HOME/.asdf/completions/asdf.bash"
-  fi
-fi'
-
-  # Ajouter à .bashrc si pas déjà présent
-  if ! grep -q "asdf.sh" ~/.bashrc; then
-    echo "$ASDF_SETUP" >> ~/.bashrc
-  fi
-
-  # Charger ASDF immédiatement
-  if [[ -f "$HOME/.asdf/asdf.sh" ]]; then
-    . "$HOME/.asdf/asdf.sh"
-  fi
-
-  success "ASDF $ASDF_VERSION installé (version Go - performances améliorées)"
-}
-
-# -----------------------------------------------------------------------------
-# INSTALLATION PLUGINS ASDF
-# -----------------------------------------------------------------------------
-install_asdf_plugins() {
-  step "Installation des plugins ASDF"
-
-  # Charger ASDF
-  if [[ -f "$HOME/.asdf/asdf.sh" ]]; then
-    . "$HOME/.asdf/asdf.sh"
-  fi
-
-  # Vérifier qu'ASDF est disponible
-  if ! command -v asdf >/dev/null; then
-    warn "ASDF n'est pas disponible. Vérifiez l'installation."
-    return 1
-  fi
-
-  # Liste des plugins
-  declare -A plugins=(
-    [java]="https://github.com/halcyon/asdf-java.git"
-    [nodejs]="https://github.com/asdf-vm/asdf-nodejs.git"
-    [python]="https://github.com/asdf-community/asdf-python.git"
-    [gradle]="https://github.com/rfrancis/asdf-gradle.git"
-    [kotlin]="https://github.com/asdf-community/asdf-kotlin.git"
-  )
-
-  # Installer chaque plugin
-  for plugin in "${!plugins[@]}"; do
-    if ! asdf plugin list 2>/dev/null | grep -q "^${plugin}$"; then
-      echo "  Installation du plugin: $plugin"
-      asdf plugin add "$plugin" "${plugins[$plugin]}" 2>&1 | grep -v "plugin already added" || true
-    else
-      echo "  Plugin $plugin déjà installé"
-    fi
-  done
-
-  # Installation de Java 21 (nécessaire pour Kobweb et Android Studio)
-  step "Installation de Java (Temurin 21.0.x)..."
-  JAVA_VERSION=$(asdf list all java | grep "temurin-21" | tail -1 | xargs)
-  
-  if [ -n "$JAVA_VERSION" ]; then
-    asdf install java "$JAVA_VERSION" 2>/dev/null || echo "  Java $JAVA_VERSION déjà installé"
-    
-    # Utiliser 'asdf set' au lieu de 'asdf global' pour ASDF 0.16.0
-    cd "$HOME" && asdf set java "$JAVA_VERSION"
-    
-    # Configuration de JAVA_HOME dans le .bashrc
-    if ! grep -q "ASDF_JAVA_RS_JAVA_HOME" ~/.bashrc; then
-      echo '. ~/.asdf/plugins/java/set-java-home.bash' >> ~/.bashrc
-    fi
-    
-    success "Java $JAVA_VERSION configuré"
-  else
-    warn "Aucune version Temurin 21 trouvée"
-  fi
-
-  success "Plugins ASDF installés"
-}
-
-# -----------------------------------------------------------------------------
-# INSTALLATION VS CODE (OFFICIELLE - Format DEB822 Moderne)
-# -----------------------------------------------------------------------------
-install_vscode() {
-  step "Installation de Visual Studio Code"
-
-  # Vérifier si VS Code est déjà installé
-  if command -v code >/dev/null; then
-    echo "Visual Studio Code est déjà installé"
-    return 0
-  fi
-
-  # Installer les dépendances
-  sudo apt-get install -y wget gpg apt-transport-https
-
-  # Télécharger et installer la clé GPG Microsoft
-  wget -qO- https://packages.microsoft.com/keys/microsoft.asc | \
-    gpg --dearmor > packages.microsoft.gpg
-  sudo install -D -o root -g root -m 644 packages.microsoft.gpg \
-    /etc/apt/keyrings/packages.microsoft.gpg
-  rm packages.microsoft.gpg
-  
-  # Ajouter le repository (format moderne DEB822)
-  echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | \
-    sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
-  
-  # Installer VS Code
-  sudo apt-get update -qq
-  sudo apt-get install -y code
-  
-  success "Visual Studio Code installé"
-}
-
-# -----------------------------------------------------------------------------
-# INSTALLATION INTELLIJ IDEA (SNAP - Édition Unifiée 2025.3+)
-# -----------------------------------------------------------------------------
-install_intellij() {
-  step "Installation d'IntelliJ IDEA (édition unifiée 2025.3+)"
-
-  # Vérifier si déjà installé
-  if snap list 2>/dev/null | grep -q "intellij-idea"; then
-    echo "IntelliJ IDEA est déjà installé"
-    return 0
-  fi
-
-  # Vérifier et installer Snap si nécessaire
-  if ! command -v snap >/dev/null; then
-    sudo apt-get install -y snapd
-    sudo systemctl enable --now snapd.socket
-    sudo ln -s /var/lib/snapd/snap /snap 2>/dev/null || true
-    sleep 2
-  fi
-
-  # Installer IntelliJ IDEA (édition unifiée)
-  sudo snap install intellij-idea-community --classic
-  
-  success "IntelliJ IDEA installé (édition unifiée 2025.3+)"
-  echo ""
-  echo "ℹ️  IntelliJ IDEA 2025.3+ : Édition unifiée"
-  echo "   - Fonctionnalités Community gratuites pour tous"
-  echo "   - Essai Ultimate de 30 jours disponible dans l'IDE"
-  echo ""
-}
-
-# -----------------------------------------------------------------------------
-# INSTALLATION MONGODB 8.0 (OFFICIELLE - Support Ubuntu 24.04 Noble)
+# INSTALLATION MONGODB
 # -----------------------------------------------------------------------------
 install_mongodb() {
-  step "Installation de MongoDB 8.0 (support natif Ubuntu 24.04)"
+  step "Installation de MongoDB 8.0"
 
-  # Vérifier si MongoDB est déjà installé
-  if command -v mongod >/dev/null; then
-    echo "MongoDB est déjà installé"
-    # Vérifier si le service est actif
+  if command -v mongod >/dev/null 2>&1; then
+    echo "MongoDB déjà installé"
     if sudo systemctl is-active --quiet mongod; then
-      echo "  Service MongoDB est actif"
-    else
-      sudo systemctl start mongod
+      echo "  Service actif"
     fi
     return 0
   fi
 
-  # Installer les dépendances
   sudo apt-get install -y gnupg curl
   
-  # Importer la clé GPG MongoDB 8.0
   curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | \
     sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg --dearmor
   
-  # Créer le fichier de liste pour Ubuntu 24.04 (noble) - Support officiel
-  echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | \
-    sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+  echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] \
+https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | \
+sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
   
-  # Installer MongoDB
   sudo apt-get update -qq
   sudo apt-get install -y mongodb-org
-  
-  # Démarrer le service
   sudo systemctl enable mongod
   sudo systemctl start mongod
   
-  # Vérifier l'installation
-  if sudo systemctl is-active --quiet mongod; then
-    success "MongoDB 8.0 installé et démarré (support natif Ubuntu 24.04)"
-  else
-    warn "MongoDB installé mais le service n'est pas actif"
-  fi
-}
-
-# -----------------------------------------------------------------------------
-# INSTALLATION OUTILS SUPPLÉMENTAIRES
-# -----------------------------------------------------------------------------
-install_additional_tools() {
-  step "Installation d'outils supplémentaires DevOps"
-
-  # Outils réseau
-  sudo apt-get install -y \
-    netcat-openbsd \
-    nmap \
-    whois \
-    telnet \
-    traceroute
-
-  # Outils de développement
-  sudo apt-get install -y \
-    httpie \
-    shellcheck \
-    yamllint \
-    python3-venv \
-    python3-pip
-
-  # Outils système modernes (Ubuntu 24.04)
-  sudo apt-get install -y \
-    ncdu \
-    lsof \
-    rsync \
-    glances \
-    eza  # Remplace exa (obsolète)
-
-  success "Outils supplémentaires installés"
+  success "MongoDB 8.0 installé"
 }
 
 # -----------------------------------------------------------------------------
@@ -604,140 +542,92 @@ install_additional_tools() {
 main() {
   parse_args "$@"
   
-  echo "==============================================="
-  echo "  SETUP ENVIRONNEMENT DEV/DEVOPS PRO"
-  echo "  Ubuntu 24.04 LTS - Version 2026"
+  echo "=============================================="
+  echo "  SETUP ENVIRONNEMENT DEV"
+  echo "  Ubuntu 24.04 LTS"
   echo "  Mode: $MODE"
-  echo "  Docker Desktop: $INSTALL_DOCKER_DESKTOP"
   echo "  Logs: $LOG_FILE"
-  echo "==============================================="
+  echo "=============================================="
   
   prechecks
   update_system
-  
-  # Installation Docker (toujours présent)
   install_docker
   
   case "$MODE" in
     "minimal")
-      # Seulement Docker
+      # Docker seulement
       ;;
       
     "dev")
-      install_asdf
-      install_asdf_plugins
+      install_java
+      install_nodejs
+      install_python
+      install_kotlin
+      install_gradle
+      install_kobweb
       install_vscode
       install_intellij
       install_postman
       ;;
       
     "full")
-      install_asdf
-      install_asdf_plugins
+      install_java
+      install_nodejs
+      install_python
+      install_kotlin
+      install_gradle
+      install_kobweb
       install_vscode
       install_intellij
       install_postman
       install_android_studio
       install_mongodb
-      install_additional_tools
       ;;
   esac
   
   [[ "$INSTALL_DOCKER_DESKTOP" == true ]] && install_docker_desktop
   
-  # Afficher le résumé
   echo ""
-  echo "==============================================="
-  echo "  INSTALLATION TERMINÉE AVEC SUCCÈS 🚀"
-  echo "==============================================="
+  echo "=============================================="
+  echo "  INSTALLATION TERMINÉE ✓"
+  echo "=============================================="
   echo ""
-  echo "📦 Résumé des installations:"
+  echo "📦 Outils installés:"
+  
   case "$MODE" in
     "minimal")
-      echo "  ✓ Docker Engine v29.x"
-      [[ "$INSTALL_DOCKER_DESKTOP" == true ]] && echo "  ✓ Docker Desktop"
+      echo "  ✓ Docker Engine"
       ;;
-    "dev")
-      echo "  ✓ Docker Engine v29.x"
-      echo "  ✓ ASDF v0.16.0 (version Go - performances améliorées)"
-      echo "  ✓ Plugins ASDF: Java, Node.js, Python, Kotlin, Gradle"
-      echo "  ✓ Java 21 (Temurin) configuré"
-      echo "  ✓ Visual Studio Code"
-      echo "  ✓ IntelliJ IDEA (édition unifiée 2025.3+)"
-      echo "  ✓ Postman"
+    "dev"|"full")
+      echo "  ✓ Docker Engine"
+      echo "  ✓ Java 21 (OpenJDK)"
+      echo "  ✓ Node.js LTS"
+      echo "  ✓ Python 3.12"
+      echo "  ✓ Kotlin"
+      echo "  ✓ Gradle"
       echo "  ✓ Kobweb CLI"
-      [[ "$INSTALL_DOCKER_DESKTOP" == true ]] && echo "  ✓ Docker Desktop"
-      ;;
-    "full")
-      echo "  ✓ Docker Engine v29.x"
-      echo "  ✓ ASDF v0.16.0 (version Go - performances améliorées)"
-      echo "  ✓ Plugins ASDF: Java, Node.js, Python, Kotlin, Gradle"
-      echo "  ✓ Java 21 (Temurin) configuré"
       echo "  ✓ Visual Studio Code"
-      echo "  ✓ IntelliJ IDEA (édition unifiée 2025.3+)"
+      echo "  ✓ IntelliJ IDEA Community"
       echo "  ✓ Postman"
-      echo "  ✓ Kobweb CLI"
-      echo "  ✓ Android Studio 2025.2.3+ (via Snap)"
-      echo "  ✓ MongoDB 8.0 (support natif Ubuntu 24.04)"
-      echo "  ✓ Outils supplémentaires (nmap, httpie, shellcheck, eza, etc.)"
-      [[ "$INSTALL_DOCKER_DESKTOP" == true ]] && echo "  ✓ Docker Desktop"
+      [[ "$MODE" == "full" ]] && echo "  ✓ Android Studio"
+      [[ "$MODE" == "full" ]] && echo "  ✓ MongoDB 8.0"
       ;;
   esac
   
   echo ""
-  echo "🚀 Prochaines étapes:"
-  echo "1. Déconnectez-vous et reconnectez-vous pour:"
-  echo "   - Utiliser Docker sans sudo (groupe docker)"
-  echo "   - Activer ASDF et ses variables d'environnement"
-  echo "   - Activer les variables d'environnement Android SDK"
-  echo "   - Activer Kobweb CLI"
+  echo "⚠️  IMPORTANT: Déconnectez-vous et reconnectez-vous"
   echo ""
-  echo "2. Après reconnexion, vérifiez les installations:"
-  echo "   docker --version"
-  echo "   asdf --version"
-  echo "   asdf current java"
-  echo "   code --version"
-  echo "   kobweb --version"
-  echo "   snap list  # Pour voir Postman, Android Studio, IntelliJ"
-  echo ""
-  if [[ "$MODE" == "full" ]]; then
-    echo "3. Pour Android Studio:"
-    echo "   - Lancez 'android-studio' depuis le terminal ou le menu"
-    echo "   - Suivez l'assistant d'installation du SDK (~2-4GB)"
-    echo ""
-    echo "4. Pour MongoDB:"
-    echo "   - Service déjà démarré automatiquement"
-    echo "   - Connexion test: mongosh"
-    echo ""
-  fi
-  echo "5. Consultez les logs détaillés:"
-  echo "   $LOG_FILE"
+  echo "Vérifications après reconnexion:"
+  echo "  docker --version"
+  [[ "$MODE" != "minimal" ]] && echo "  java --version"
+  [[ "$MODE" != "minimal" ]] && echo "  node --version"
+  [[ "$MODE" != "minimal" ]] && echo "  python3.12 --version"
+  [[ "$MODE" != "minimal" ]] && echo "  gradle --version"
+  [[ "$MODE" != "minimal" ]] && echo "  kobweb version"
   echo ""
   
-  # Estimation de l'espace disque
-  echo "💾 Espace disque utilisé:"
-  case "$MODE" in
-    "minimal") echo "  ~500 MB - 1 GB" ;;
-    "dev") echo "  ~2 - 3 GB" ;;
-    "full") echo "  ~6 - 8 GB (Android SDK non inclus - +2-4GB lors du 1er lancement)" ;;
-  esac
-  echo ""
-  
-  echo "📚 Versions installées (Janvier 2026):"
-  echo "  - Docker Engine: v29.1.x"
-  echo "  - Docker Compose: v2.39.x"
-  echo "  - ASDF: v0.16.0 (Go - performances optimisées)"
-  echo "  - Java: Temurin 21.0.x"
-  echo "  - MongoDB: 8.0 (support natif Ubuntu 24.04)"
-  echo "  - Android Studio: 2025.2.3+"
-  echo "  - IntelliJ IDEA: 2025.3+ (édition unifiée)"
-  echo "  - Kobweb: Latest"
-  echo ""
-  
-  success "Setup complet terminé à $(date)"
-  warn "IMPORTANT: Déconnexion/reconnexion requise pour finaliser l'installation"
+  success "Installation terminée à $(date)"
 }
 
-# Exécuter le script
-trap 'fail "Erreur à la ligne $LINENO"' ERR
+trap 'fail "Erreur ligne $LINENO"' ERR
 main "$@"

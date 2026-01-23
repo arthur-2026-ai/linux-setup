@@ -1,0 +1,23 @@
+[2026-01-22 16:24:05] [STEP] Vérifications préalables
+[2026-01-22 16:24:11] [SUCCESS] Vérifications terminées
+[2026-01-22 16:24:11] [STEP] Mise à jour du système
+[2026-01-22 16:24:18] [SUCCESS] Système mis à jour et packages essentiels installés
+[2026-01-22 16:24:18] [STEP] Installation de Docker Engine (procédure officielle)
+[2026-01-22 16:24:18] [STEP] Installation de ASDF Version Manager vv0.16.0
+[2026-01-22 16:24:18] [STEP] Installation des plugins ASDF
+[2026-01-22 16:24:19] [STEP] Installation de Java (Temurin 21.0.x)...
+[2026-01-22 16:24:19] [SUCCESS] Java temurin-21.0.10+7.0.LTS configuré
+[2026-01-22 16:24:19] [SUCCESS] Plugins ASDF installés
+[2026-01-22 16:24:19] [STEP] Installation de Visual Studio Code
+[2026-01-22 16:24:19] [STEP] Installation d'IntelliJ IDEA (édition unifiée 2025.3+)
+[2026-01-22 16:24:19] [SUCCESS] IntelliJ IDEA installé (édition unifiée 2025.3+)
+[2026-01-22 16:24:19] [STEP] Installation de Postman (via Snap - méthode officielle)
+[2026-01-22 16:24:19] [STEP] Installation d'Android Studio (via Snap - méthode officielle 2026)
+[2026-01-22 16:24:19] [STEP] Installation de MongoDB 8.0 (support natif Ubuntu 24.04)
+[2026-01-22 16:24:19] [STEP] Installation d'outils supplémentaires DevOps
+[2026-01-22 16:24:22] [SUCCESS] Outils supplémentaires installés
+[2026-01-22 16:24:22] [STEP] Installation de Docker Desktop
+[2026-01-22 16:26:11] [SUCCESS] Docker Desktop installé
+[2026-01-22 16:26:11] [WARN] Redémarrage recommandé pour une expérience complète
+[2026-01-22 16:26:11] [SUCCESS] Setup complet terminé à jeu. 22 janv. 2026 16:26:11 WAT
+[2026-01-22 16:26:11] [WARN] IMPORTANT: Déconnexion/reconnexion requise pour finaliser l'installation

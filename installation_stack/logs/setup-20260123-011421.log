@@ -1,0 +1,22 @@
+[2026-01-23 01:14:21] [STEP] Vérifications préalables
+[2026-01-23 01:14:21] [SUCCESS] Vérifications terminées
+[2026-01-23 01:14:21] [STEP] Mise à jour du système
+[2026-01-23 01:14:28] [SUCCESS] Système mis à jour
+[2026-01-23 01:14:28] [STEP] Installation de Docker Engine
+[2026-01-23 01:14:28] [STEP] Installation de Java 21
+[2026-01-23 01:14:29] [STEP] Installation de Node.js LTS
+[2026-01-23 01:14:29] [STEP] Installation de Python 3.12
+[2026-01-23 01:14:29] [STEP] Installation de Kotlin
+[2026-01-23 01:14:29] [STEP] Installation de Gradle
+[2026-01-23 01:14:29] [STEP] Installation de Kobweb CLI
+[2026-01-23 01:14:37] [SUCCESS] Kobweb 0.9.21 installé
+[2026-01-23 01:14:37] [WARN] Kobweb installé mais nécessite une reconnexion pour fonctionner
+[2026-01-23 01:14:37] [STEP] Installation de Visual Studio Code
+[2026-01-23 01:14:37] [STEP] Installation d'IntelliJ IDEA Community
+[2026-01-23 01:14:38] [STEP] Installation de Postman
+[2026-01-23 01:14:38] [SUCCESS] Postman installé
+[2026-01-23 01:14:38] [STEP] Installation d'Android Studio
+[2026-01-23 01:14:38] [STEP] Installation de MongoDB 8.0
+[2026-01-23 01:14:38] [STEP] Installation de Docker Desktop
+[2026-01-23 01:15:25] [SUCCESS] Docker Desktop installé
+[2026-01-23 01:15:25] [SUCCESS] Installation terminée à ven. 23 janv. 2026 01:15:25 WAT
