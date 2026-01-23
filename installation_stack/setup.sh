@@ -209,74 +209,47 @@ install_docker_desktop() {
 # INSTALLATION JAVA
 # -----------------------------------------------------------------------------
 install_java() {
-  step "Installation de Java 21"
+  step "Installation Java 21 (APT only)"
 
-  if command -v java >/dev/null 2>&1; then
-    echo "Java déjà installé: $(java -version 2>&1 | head -n 1)"
-    
-    # Vérifier et corriger JAVA_HOME si nécessaire
-    if [[ ! -d "${JAVA_HOME:-}" ]] || [[ -z "${JAVA_HOME:-}" ]]; then
-      echo "Configuration de JAVA_HOME..."
-      JAVA_PATH=$(update-alternatives --query java | grep 'Value:' | cut -d' ' -f2)
-      JAVA_HOME_PATH=$(dirname $(dirname "$JAVA_PATH"))
-      
-      # Supprimer l'ancienne configuration incorrecte
-      sed -i '/^export JAVA_HOME=/d' ~/.bashrc 2>/dev/null || true
-      sed -i '/^export PATH=.*JAVA_HOME/d' ~/.bashrc 2>/dev/null || true
-      sed -i '/# Java$/d' ~/.bashrc 2>/dev/null || true
-      
-      # Ajouter la bonne configuration
-      echo '' >> ~/.bashrc
-      echo '# Java' >> ~/.bashrc
-      echo "export JAVA_HOME=\"$JAVA_HOME_PATH\"" >> ~/.bashrc
-      echo 'export PATH="$PATH:$JAVA_HOME/bin"' >> ~/.bashrc
-      
-      # Charger immédiatement pour la session actuelle
-      export JAVA_HOME="$JAVA_HOME_PATH"
-      export PATH="$PATH:$JAVA_HOME/bin"
-      
-      echo "JAVA_HOME configuré: $JAVA_HOME"
-    fi
-    
-    # Vérifier la version de Java
-    JAVA_VERSION=$(java -version 2>&1 | head -n 1 | grep -oP 'version "?\K[0-9]+')
-    if [[ "$JAVA_VERSION" -lt 21 ]]; then
-      echo "Java $JAVA_VERSION détecté. Mise à jour vers Java 21..."
-      sudo apt-get install -y openjdk-21-jdk openjdk-21-jre
-      sudo update-alternatives --set java /usr/lib/jvm/java-21-openjdk-amd64/bin/java
-      
-      # Reconfigurer JAVA_HOME avec Java 21
-      JAVA_PATH=$(update-alternatives --query java | grep 'Value:' | cut -d' ' -f2)
-      JAVA_HOME_PATH=$(dirname $(dirname "$JAVA_PATH"))
-      export JAVA_HOME="$JAVA_HOME_PATH"
-      export PATH="$PATH:$JAVA_HOME/bin"
-      
-      success "Java 21 installé et configuré"
-    else
-      success "Java $JAVA_VERSION OK"
-    fi
-    
-    return 0
+  # 1. Installer Java 21 s'il n'existe pas
+  if ! command -v java >/dev/null 2>&1; then
+    log_message "INFO" "Java absent, installation..."
+    sudo apt-get update -y
+    sudo apt-get install -y openjdk-21-jdk
   fi
 
-  sudo apt-get install -y openjdk-21-jdk openjdk-21-jre
-  
-  # Déterminer automatiquement le chemin de Java
-  JAVA_PATH=$(update-alternatives --query java | grep 'Value:' | cut -d' ' -f2)
-  JAVA_HOME_PATH=$(dirname $(dirname "$JAVA_PATH"))
-  
-  if ! grep -q "JAVA_HOME" ~/.bashrc; then
-    echo '' >> ~/.bashrc
-    echo '# Java' >> ~/.bashrc
-    echo "export JAVA_HOME=\"$JAVA_HOME_PATH\"" >> ~/.bashrc
-    echo 'export PATH="$PATH:$JAVA_HOME/bin"' >> ~/.bashrc
+  # 2. Vérifier que java est bien enregistré
+  if ! update-alternatives --list java >/dev/null 2>&1; then
+    error "Java installé mais non enregistré dans update-alternatives"
+    return 1
   fi
-  
-  # Charger immédiatement pour la session actuelle
+
+  # 3. Forcer Java 21 comme version par défaut
+  sudo update-alternatives --set java \
+    /usr/lib/jvm/java-21-openjdk-amd64/bin/java
+
+  # 4. Déterminer JAVA_HOME automatiquement (méthode fiable)
+  JAVA_PATH="$(readlink -f "$(command -v java)")"
+  JAVA_HOME_PATH="$(dirname "$(dirname "$JAVA_PATH")")"
+
+  # 5. Nettoyage anciennes configs JAVA_HOME
+  sed -i '/^export JAVA_HOME=/d' ~/.bashrc
+  sed -i '/JAVA_HOME\/bin/d' ~/.bashrc
+  sed -i '/# Java (OpenJDK/d' ~/.bashrc
+
+  # 6. Ajout propre et idempotent
+  {
+    echo ""
+    echo "# Java (OpenJDK 21)"
+    echo "export JAVA_HOME=\"$JAVA_HOME_PATH\""
+    echo 'export PATH="$PATH:$JAVA_HOME/bin"'
+  } >> ~/.bashrc
+
+  # 7. Appliquer à la session courante
   export JAVA_HOME="$JAVA_HOME_PATH"
   export PATH="$PATH:$JAVA_HOME/bin"
 
-  success "Java 21 installé - JAVA_HOME: $JAVA_HOME"
+  success "Java 21 prêt — JAVA_HOME=$JAVA_HOME"
 }
 
 # -----------------------------------------------------------------------------
