@@ -215,7 +215,7 @@ install_java() {
     echo "Java déjà installé: $(java -version 2>&1 | head -n 1)"
     
     # Vérifier et corriger JAVA_HOME si nécessaire
-    if [[ ! -d "$JAVA_HOME" ]] || [[ -z "$JAVA_HOME" ]]; then
+    if [[ ! -d "${JAVA_HOME:-}" ]] || [[ -z "${JAVA_HOME:-}" ]]; then
       echo "Configuration de JAVA_HOME..."
       JAVA_PATH=$(update-alternatives --query java | grep 'Value:' | cut -d' ' -f2)
       JAVA_HOME_PATH=$(dirname $(dirname "$JAVA_PATH"))
@@ -223,6 +223,7 @@ install_java() {
       # Supprimer l'ancienne configuration incorrecte
       sed -i '/^export JAVA_HOME=/d' ~/.bashrc 2>/dev/null || true
       sed -i '/^export PATH=.*JAVA_HOME/d' ~/.bashrc 2>/dev/null || true
+      sed -i '/# Java$/d' ~/.bashrc 2>/dev/null || true
       
       # Ajouter la bonne configuration
       echo '' >> ~/.bashrc
@@ -235,6 +236,24 @@ install_java() {
       export PATH="$PATH:$JAVA_HOME/bin"
       
       echo "JAVA_HOME configuré: $JAVA_HOME"
+    fi
+    
+    # Vérifier la version de Java
+    JAVA_VERSION=$(java -version 2>&1 | head -n 1 | grep -oP 'version "?\K[0-9]+')
+    if [[ "$JAVA_VERSION" -lt 21 ]]; then
+      echo "Java $JAVA_VERSION détecté. Mise à jour vers Java 21..."
+      sudo apt-get install -y openjdk-21-jdk openjdk-21-jre
+      sudo update-alternatives --set java /usr/lib/jvm/java-21-openjdk-amd64/bin/java
+      
+      # Reconfigurer JAVA_HOME avec Java 21
+      JAVA_PATH=$(update-alternatives --query java | grep 'Value:' | cut -d' ' -f2)
+      JAVA_HOME_PATH=$(dirname $(dirname "$JAVA_PATH"))
+      export JAVA_HOME="$JAVA_HOME_PATH"
+      export PATH="$PATH:$JAVA_HOME/bin"
+      
+      success "Java 21 installé et configuré"
+    else
+      success "Java $JAVA_VERSION OK"
     fi
     
     return 0
@@ -346,7 +365,7 @@ install_kobweb() {
   step "Installation de Kobweb CLI"
 
   # Vérifier que JAVA_HOME est correct
-  if [[ -z "$JAVA_HOME" ]] || [[ ! -d "$JAVA_HOME" ]]; then
+  if [[ -z "${JAVA_HOME:-}" ]] || [[ ! -d "${JAVA_HOME:-}" ]]; then
     echo "Configuration de JAVA_HOME pour Kobweb..."
     JAVA_PATH=$(update-alternatives --query java | grep 'Value:' | cut -d' ' -f2)
     export JAVA_HOME=$(dirname $(dirname "$JAVA_PATH"))
@@ -386,7 +405,7 @@ install_kobweb() {
   # Ajouter au PATH
   if ! grep -q "/opt/kobweb-${KOBWEB_VERSION}/bin" ~/.bashrc; then
     # Supprimer les anciennes entrées Kobweb
-    sed -i '/# Kobweb/d' ~/.bashrc 2>/dev/null || true
+    sed -i '/# Kobweb$/d' ~/.bashrc 2>/dev/null || true
     sed -i '/kobweb.*\/bin/d' ~/.bashrc 2>/dev/null || true
     
     echo '' >> ~/.bashrc
