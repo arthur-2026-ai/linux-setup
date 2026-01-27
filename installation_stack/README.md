@@ -35,10 +35,12 @@ git clone https://github.com/arthur-2026-ai/linux-setup.git
 cd installation_stack/
 ```
 
-### 2. Rendre le script exécutable
+### 2. Rendre les scripts exécutable
 
 ```bash
 chmod +x setup.sh
+```
+```bash
 chmod +x verify_install.sh
 ```
 

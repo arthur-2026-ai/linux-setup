@@ -37,7 +37,7 @@ Cette stack est **obligatoire pour tous les développeurs**.
 
 ### 🖥️ Système
 
-*   **Ubuntu 22.04 LTS** (obligatoire)
+*   **Ubuntu 24.04 LTS** (obligatoire)
 
 ### 💻 Langage & Framework
 
@@ -91,7 +91,7 @@ Pas besoin d'être un pro de Linux au début.
 
 ##  Comment commencer (en gros)
 
-1.  Installer Ubuntu 22.04 LTS
+1.  Installer Ubuntu 24.04 LTS
 2.  Cloner ce dépôt
 3.  Suivre la formation Linux
 4.  Lancer le script d'installation
